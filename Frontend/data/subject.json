@@ -1,0 +1,44 @@
+[
+  {
+    "semester": 1,
+    "term1": ["Mathematics ", "Introduction to Programming", "Digital Logic", "Engineering Physics"],
+    "term2": ["Mathematics II", "Data Structures", "Computer Organization", "Engineering Chemistry"]
+  },
+  {
+    "semester": 2,
+    "term1": ["Discrete Mathematics", "Object Oriented Programming", "Signals & Systems", "Professional Communication"],
+    "term2": ["Operating Systems", "Database Management Systems", "Software Engineering", "Mathematics III"]
+  },
+  {
+    "semester": 3,
+    "term1": ["Design & Analysis of Algorithms", "Computer Networks", "Theory of Computation", "Unix & Shell Programming"],
+    "term2": ["Artificial Intelligence", "Compiler Design", "Web Technologies", "Probability & Statistics"]
+  },
+  {
+    "semester": 4,
+    "term1": ["Machine Learning", "Mobile Application Development", "Computer Graphics", "Cryptography & Network Security"],
+    "term2": ["Data Mining", "Cloud Computing", "Distributed Systems", "Open Elective I"]
+  },
+  {
+    "semester": 5,
+    "term1": ["Deep Learning", "Human-Computer Interaction", "Software Testing", "Open Elective II"],
+    "term2": ["Big Data Analytics", "Internet of Things (IoT)", "Natural Language Processing", "Department Elective I"]
+  },
+  {
+    "semester": 6,
+    "term1": ["Blockchain Technology", "Augmented & Virtual Reality", "Ethical Hacking", "Department Elective II"],
+    "term2": ["Cybersecurity", "DevOps & Agile Practices", "Entrepreneurship", "Open Elective III"]
+  },
+  {
+    "semester": 7,
+    "term1": ["Project Phase I", "Research Methodology", "Elective III", "Professional Ethics"],
+    "term2": ["Internship / Industry Project", "Seminar", "Elective IV", "Technical Writing"]
+  },
+  {
+    "semester": 8,
+    "term1": ["Project Phase II", "Startup Incubation Lab", "Capstone Project", "Viva Voce"],
+    "term2": ["Innovation & Product Design", "Career Development Skills", "Open Elective IV", "Final Review & Submission"]
+  }
+]
+
+

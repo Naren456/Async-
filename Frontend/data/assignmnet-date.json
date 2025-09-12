@@ -1,0 +1,12 @@
+
+[
+    { "id": 1, "title": "Graded Quiz Week 7 & 8", "subject": "DSA", "dueDate": "16 July 2025", "Time": "11:59PM" },
+    { "id": 2, "title": "Graded Quiz Week 7 & 8", "subject": "CLI & Scripting", "dueDate": "16 July 2025", "Time": "11:59PM" },
+    { "id": 3, "title": "Graded Quiz Week 7 & 8", "subject": "General Physics", "dueDate": "16 July 2025", "Time": "11:59PM" },
+    { "id": 4, "title": "Graded Quiz Week 7 & 8", "subject": "General Biology", "dueDate": "16 July 2025", "Time": "11:59PM" },
+    { "id": 9, "title": "Auto Graded Lab 1", "subject": "DSA", "dueDate": "19 July 2025", "Time": "11:59PM" },
+    { "id": 5, "title": "Graded Quiz Week 9 & 10", "subject": "DSA", "dueDate": "26 July 2025", "Time": "11:59PM" },
+    { "id": 6, "title": "Graded Quiz Week 9 & 10", "subject": "CLI & Scripting", "dueDate": "26 July 2025", "Time": "11:59PM" },
+    { "id": 7, "title": "Graded Quiz Week 9 & 10", "subject": "General Biology", "dueDate": "26 July 2025", "Time": "11:59PM" },
+    { "id": 8, "title": "Graded Quiz Week 9 & 10", "subject": "General Physics", "dueDate": "26 July 2025", "Time": "11:59PM" }
+]

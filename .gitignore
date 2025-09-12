@@ -1,0 +1,6 @@
+/Backend/.env
+/Frontend/.env
+/Frontend/node_modules
+/Backend/node_modules
+/Backend/__pycache__
+/Frontend/build-*.apk
