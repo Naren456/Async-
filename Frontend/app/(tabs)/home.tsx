@@ -23,9 +23,11 @@ const Home = () => {
     const loadAssignments = async () => {
       try {
         // console.log("Loading assignments...");
-        const grouped = await GetAssignments();
+        const data = await GetAssignments(cohort);
         // console.log("Grouped assignments in Home:", grouped);
-        setGroupedAssignments(grouped);
+        setGroupedAssignments(data.Assignments);
+        console.log("Cohort No in Home:", data.CohortNo);
+        console.log("Assignments in Home:", data.Assignments);
       } catch (err) {
         console.error("Error loading ICS in Home:", err);
       }

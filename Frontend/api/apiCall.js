@@ -35,9 +35,9 @@ export const AuthsignIn = async (userData) => {
 
 
 // Fetch Assignment //
-export const GetAssignments = async () => {
+export const GetAssignments = async (cohort) => {
   try {
-    const response = await api.get("/api/coursera/assignments")
+    const response = await api.get(`/api/coursera/assignments?cohort=${cohort}`)
     return response.data;
   } catch (error) {
     console.error("Error in GetAssignments:", error);
