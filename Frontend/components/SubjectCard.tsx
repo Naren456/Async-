@@ -20,7 +20,7 @@ const SubjectCard = ({ name, skill }: Props) => {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push(`/subject/${encodeURIComponent(name)}`)}
+      onPress={() => router.push("/(tabs)/subject")}
       className={`mb-3 rounded-2xl p-4 shadow border-2 ${bgClass} ${borderClass}`}
     >
       {/* Skill tag badge */}

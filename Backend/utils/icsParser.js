@@ -109,7 +109,7 @@ export function groupAssignmentsByDate(assignments) {
 }
 
 /** --- Fetch ICS → Parse → Filter → Group --- */
-export async function fetchUpcomingAssignmentsGrouped(cohort = 6, days = 90) {
+export async function fetchUpcomingAssignmentsGrouped(cohort , days = 90) {
   try {
     const url = getICSUrl(cohort);
     console.log(url);

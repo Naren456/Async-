@@ -1,12 +1,11 @@
-import { CalendarDays, ChevronRight, Plus } from "lucide-react-native";
+import { CalendarDays, ChevronRight } from "lucide-react-native";
 import React from "react";
-import { Alert, Pressable, Text, View } from "react-native";
-import RNCalendarEvents from "react-native-calendar-events";
+import { Alert, Pressable, Text, View, Linking } from "react-native";
 
 interface AssignmentCardProps {
   title: string;
   subject: string;
-  dueDate: string; // should be in ISO format for calendar
+  dueDate: string; // ISO format
   link: string;
   onPress?: () => void;
 }
@@ -15,24 +14,20 @@ const AssignmentCard: React.FC<AssignmentCardProps> = ({
   title,
   subject,
   dueDate,
+  link,
   onPress,
 }) => {
-  const addToCalendar = async () => {
+  const openAssignment = async () => {
     try {
-      const permission = await RNCalendarEvents.requestPermissions();
-      if (permission === "authorized") {
-        await RNCalendarEvents.saveEvent(title, {
-          startDate: new Date(dueDate).toISOString(),
-          endDate: new Date(new Date(dueDate).getTime() + 60 * 60 * 1000).toISOString(), // default 1 hour
-          notes: `Assignment for ${subject}`,
-        });
-        Alert.alert("Success", "Assignment added to your calendar!");
+      const supported = await Linking.canOpenURL(link);
+      if (supported) {
+        await Linking.openURL(link);
       } else {
-        Alert.alert("Permission Denied", "Cannot access calendar.");
+        Alert.alert("Error", "Cannot open this link.");
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to add to calendar.");
-      console.error(error);
+      console.error("Failed to open link:", error);
+      Alert.alert("Error", "Failed to open the assignment link.");
     }
   };
 
@@ -48,28 +43,19 @@ const AssignmentCard: React.FC<AssignmentCardProps> = ({
         {title}
       </Text>
 
-      {/* Due Date + Chevron + Add to Calendar */}
+      {/* Due Date + Chevron */}
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center">
           <CalendarDays size={16} color="#60A5FA" />
           <Text className="ml-2 text-sm text-gray-300">Due: {dueDate}</Text>
         </View>
 
-        <View className="flex-row items-center">
-          {onPress && <ChevronRight size={18} color="#60A5FA" />}
-          <Pressable onPress={addToCalendar} className="ml-3 p-1 rounded-full bg-blue-600/30">
-            <Plus size={18} color="#60A5FA" />
-          </Pressable>
-        </View>
+        <ChevronRight size={18} color="#60A5FA" />
       </View>
     </View>
   );
 
-  if (onPress) {
-    return <Pressable onPress={onPress}>{CardContent}</Pressable>;
-  }
-
-  return CardContent;
+  return <Pressable onPress={openAssignment}>{CardContent}</Pressable>;
 };
 
 export default AssignmentCard;

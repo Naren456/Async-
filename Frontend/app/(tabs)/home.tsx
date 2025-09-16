@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, ScrollView } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { Text, View, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AssignmentCard from "../../components/AssignmentCard";
 
-import { GetAssignments } from "@/api/apiCall";
+import { GetAssignments } from "../../api/apiCall";
  type Assignment = {
   id: string;
   title: string;
@@ -17,23 +17,47 @@ import { GetAssignments } from "@/api/apiCall";
 type GroupedAssignments = Record<string, Assignment[]>;
 const Home = () => {
   const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
-  const [cohort, setCohort] = useState(4);
-
+ 
+  const [cohort, setCohort] = useState<number | undefined>();
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
   useEffect(() => {
     const loadAssignments = async () => {
+      setLoading(true);
+      setCohort(4)
+      setError(null);
       try {
         // console.log("Loading assignments...");
         const data = await GetAssignments(cohort);
         // console.log("Grouped assignments in Home:", grouped);
-        setGroupedAssignments(data.Assignments);
+        setGroupedAssignments(data.Assignments || {});
         console.log("Cohort No in Home:", data.CohortNo);
         console.log("Assignments in Home:", data.Assignments);
       } catch (err) {
         console.error("Error loading ICS in Home:", err);
+        setError("Failed to load assignments. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
     loadAssignments();
+  }, [cohort]);
+
+  const onRefresh = useCallback (async () => {
+    setRefreshing(true);
+    setError(null);
+    try {
+      const data = await GetAssignments(cohort);
+      setGroupedAssignments(data.Assignments || {});
+    } catch (err) {
+      console.error("Error refreshing assignments:", err);
+      setError("Failed to refresh assignments. Please try again.");
+    } finally {
+      setRefreshing(false);
+    }
   }, [cohort]);
 
   return (
@@ -45,9 +69,30 @@ const Home = () => {
            Upcoming Deadline
           </Text>
         </View>
-         <ScrollView showsVerticalScrollIndicator={false} className="px-4">
-        {/* Assignment List */}
-        {Object.keys(groupedAssignments).length === 0 ? (
+         <ScrollView 
+           showsVerticalScrollIndicator={false} 
+           className="px-4"
+           refreshControl={
+             <RefreshControl
+               refreshing={refreshing}
+               onRefresh={onRefresh}
+               colors={['#3B82F6']}
+               tintColor="#3B82F6"
+             />
+           }
+         >
+        {/* Loading State */}
+        {loading ? (
+          <View className="flex-1 justify-center items-center py-20">
+            <ActivityIndicator size="large" color="#3B82F6" />
+            <Text className="text-gray-400 mt-4 text-base">Loading assignments...</Text>
+          </View>
+        ) : error ? (
+          <View className="flex-1 justify-center items-center py-20">
+            <Text className="text-red-400 text-base text-center mb-4">{error}</Text>
+            <Text className="text-gray-400 text-sm text-center">Pull down to refresh</Text>
+          </View>
+        ) : Object.keys(groupedAssignments).length === 0 ? (
           <Text className="text-gray-400 px-5 text-base">
              No upcoming assignments
           </Text>
