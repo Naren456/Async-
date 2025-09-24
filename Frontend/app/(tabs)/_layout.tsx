@@ -36,14 +36,15 @@ const TabLayout = () => {
         }}
       />
         <Tabs.Screen
-        name="subject"
+        name="notes"
         options={{
-          title: "Subject",
+          title: "Notes",
           tabBarIcon: ({ color }) => (
           <MaterialCommunityIcons name="book-open-page-variant" size={24} color={color} />
           ),
         }}
       />
+      
       <Tabs.Screen
         name="profile"
         options={{

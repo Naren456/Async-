@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Text, View, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AssignmentCard from "../../components/AssignmentCard";
-
 import { GetAssignments } from "../../api/apiCall";
  type Assignment = {
   id: string;
@@ -15,7 +14,7 @@ import { GetAssignments } from "../../api/apiCall";
 
 /** Grouped assignments type */
 type GroupedAssignments = Record<string, Assignment[]>;
-const Home = () => {
+const   Assignment = () => {
   const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
  
   const [cohort, setCohort] = useState<number | undefined>();
@@ -23,28 +22,33 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  useEffect(() => {
-    const loadAssignments = async () => {
-      setLoading(true);
-      setCohort(4)
-      setError(null);
-      try {
-        // console.log("Loading assignments...");
-        const data = await GetAssignments(cohort);
-        // console.log("Grouped assignments in Home:", grouped);
-        setGroupedAssignments(data.Assignments || {});
-        console.log("Cohort No in Home:", data.CohortNo);
-        console.log("Assignments in Home:", data.Assignments);
-      } catch (err) {
-        console.error("Error loading ICS in Home:", err);
-        setError("Failed to load assignments. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const loadAssignments = async () => {
+    setLoading(true);
+    setCohort(4);
+    setError(null);
+    try {
+      const data = await GetAssignments(cohort);
+      setGroupedAssignments(data.Assignments || {});
 
-    loadAssignments();
-  }, [cohort]);
+      // Schedule notifications for all assignments
+      // Object.values(data.Assignments || {}).forEach((assignments: any) => {
+      //   assignments.forEach((assignment: any) => {
+      //     scheduleAssignmentNotification(assignment);
+      //   });
+      // });
+
+      console.log("Assignments scheduled for notifications ✅");
+    } catch (err) {
+      console.error("Error loading assignments:", err);
+      setError("Failed to load assignments. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadAssignments();
+}, [cohort]);
 
   const onRefresh = useCallback (async () => {
     setRefreshing(true);
@@ -122,4 +126,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Assignment;

@@ -6,7 +6,9 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    // Only include the types you actually use in your project
+    "types": []
   },
   "include": [
     "**/*.ts",
@@ -14,5 +16,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
-  ]
+ ]
 }

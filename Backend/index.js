@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import AuthRouter from './routes/auth.route.js';
 import CourseraRouter from './routes/coursera.route.js';
+import subjectRouter from './routes/subject.route.js';
 dotenv.config();
 
 const app = express();
@@ -20,7 +21,9 @@ app.use(express.json());
 // routes
 app.use('/api/auth', AuthRouter);
 app.use('/api/coursera',CourseraRouter);
+app.use('/api/subjects', subjectRouter);
 
+// test route
 
 app.get('/', (req, res) => {
   res.send('Hello from the backend!');

@@ -5,20 +5,22 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { BookOpen, Calendar, Bell, BarChart3 } from 'lucide-react-native';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const { width, height } = Dimensions.get('window');
 
 export default function Index() {
   const router = useRouter();
 
   return (
+
     <SafeAreaView className="flex-1 bg-blue-900">
       <StatusBar style="light" />
-      <LinearGradient
-        colors={['#1E3A8A', '#3B82F6', '#60A5FA']}
-        locations={[0, 0.5, 1]}
-        style={{ flex: 1 }}
-      >
+     <LinearGradient
+       colors={["#1e3a8a", "#2563eb", "#60a5fa"]}
+       locations={[0, 0.5, 1]}
+       style={{ flex: 1 }}
+     >
         <View className="flex-1 items-center justify-center px-8">
           {/* Header Section */}
           <View className="justify-center items-center mb-16">
@@ -87,7 +89,9 @@ export default function Index() {
         <View className="absolute top-24 right-12 w-16 h-16 rounded-full bg-white/5" />
         <View className="absolute top-44 left-10 w-10 h-10 rounded-full bg-white/5" />
         <View className="absolute bottom-36 right-8 w-14 h-14 rounded-full bg-white/5" />
+        
       </LinearGradient>
     </SafeAreaView>
+
   );
 }

@@ -56,19 +56,3 @@ export const GetAssignments = async (cohort) => {
     return {};
   }
 };
-
-//
-
-export async function GetSubjects(cohort) {
-  // simulate delay
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  // return dummy subjects based on cohort
-  return [
-    { id: "cs101", name: "Data Structures & Algorithms", code: "CS101", professor: "Dr. Sharma" },
-    { id: "ma102", name: "Linear Algebra", code: "MA102", professor: "Prof. Mehta" },
-    { id: "ph103", name: "Physics II", code: "PH103", professor: "Dr. Rao" },
-    { id: "hs104", name: "Professional Communication", code: "HS104", professor: "Ms. Iyer" },
-    { id: "ee105", name: "Electrical Circuits", code: "EE105", professor: "Dr. Verma" },
-  ];
-}

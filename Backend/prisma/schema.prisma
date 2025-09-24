@@ -1,9 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// Prisma Schema for College Resources App
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -14,6 +9,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ENUMS
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+// MODELS
+
 model User {
   id         String   @id @default(cuid())
   email      String   @unique
@@ -21,7 +24,30 @@ model User {
   password   String?
   profilePic String?
   cohortNo   Int
+  semester   Int // user's current semester
+  term       Int // user's current term
+  role       Role     @default(STUDENT)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
+model Subject {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  semester  Int // subject's semester
+  term      Int // subject's term
+  notes     Note[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  pdfUrl    String // URL of the uploaded PDF (Cloudinary, Google Drive, etc.)
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,7 @@
+[
+  { "code": "ZC219", "name": "Discrete Mathematics", "semester": 1, "term": 1},
+  { "code": "ZC230", "name": "Linear Algebra and Optimization", "semester": 1, "term": 2 },
+  { "code": "ZC228", "name": "Introduction to Computing Systems", "semester": 1, "term": 2 },
+  { "code": "ZC111", "name": "Basic Electronics", "semester": 1, "term": 2 },
+  { "code": "ZC239", "name": "Writing Practice", "semester": 1, "term": 1 }
+]

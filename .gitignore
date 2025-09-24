@@ -4,4 +4,9 @@
 /Backend/node_modules
 /Backend/__pycache__
 /Frontend/build-*.apk
-/Frontend-2
+/Frontend/.expo
+/Frontend/.vscode
+/Frontend/android
+/Frontend/node_modules
+/Frontend/ios
+.vscode

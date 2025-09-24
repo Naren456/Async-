@@ -52,13 +52,17 @@ export default function SignIn() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-blue-900">
+    <SafeAreaView className="flex-1 bg-[#0f172b]">
       <StatusBar style="light" />
-      <LinearGradient 
-        colors={["#1E3A8A", "#3B82F6", "#60A5FA"]} 
-        locations={[0, 0.5, 1]}
-        style={{ flex: 1 }}
-      >
+<LinearGradient
+  colors={["#1e3a8a", "#2563eb", "#60a5fa"]}
+  locations={[0, 0.5, 1]}
+  style={{ flex: 1 }}
+>
+
+
+
+
         <View className="flex-1 items-center justify-center px-8">
           {/* Header */}
           <View className="justify-center items-center mb-12">
