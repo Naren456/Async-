@@ -10,3 +10,9 @@
 /Frontend/node_modules
 /Frontend/ios
 .vscode
+/Backend/file_upload.js
+/Backend/notes.js
+/Backend/subject.json
+/Backend/assignments.js
+/Backend/subject.js
+/Backend/upload.js

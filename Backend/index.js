@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import AuthRouter from './routes/auth.route.js';
 import CourseraRouter from './routes/coursera.route.js';
 import subjectRouter from './routes/subject.route.js';
+import assignmentRouter from './routes/assignment.route.js';
+
 dotenv.config();
 
 const app = express();
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use('/api/auth', AuthRouter);
 app.use('/api/coursera',CourseraRouter);
 app.use('/api/subjects', subjectRouter);
+app.use('/api/assignments', assignmentRouter);
 
 // test route
 

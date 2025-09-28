@@ -18,36 +18,79 @@ enum Role {
 // MODELS
 
 model User {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  name       String?
-  password   String?
-  profilePic String?
-  cohortNo   Int
-  semester   Int // user's current semester
-  term       Int // user's current term
-  role       Role     @default(STUDENT)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id             String           @id @default(cuid())
+  email          String           @unique
+  name           String?
+  password       String?
+  profilePic     String?
+  role           Role             @default(STUDENT)
+  cohortNo       Int? 
+  cohort         Cohort?          @relation(fields: [cohortNo], references: [cohortNo])
+  semester       Int?             @default(1)
+  term           Int?             @default(1)
+  assignments    UserAssignment[] // Track assignments + completion
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 model Subject {
-  id        String   @id @default(cuid())
-  code      String   @unique
-  name      String
-  semester  Int // subject's semester
-  term      Int // subject's term
-  notes     Note[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  code        String       @id      // primary key
+  name        String
+  semester    Int          // subject's semester
+  term        Int          // subject's term
+  assignments Assignment[]
+  notes       Note[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Assignment {
+  id             String           @id @default(cuid())
+  title          String
+  dueDate        DateTime?
+  cohortNo       Int 
+  link           String  
+  cohort         Cohort           @relation(fields: [cohortNo], references: [cohortNo])
+  subjectCode    String
+  subject        Subject          @relation(fields: [subjectCode], references: [code])
+  users          UserAssignment[] // Users assigned this assignment
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([title, cohortNo, subjectCode])
 }
 
 model Note {
-  id        String   @id @default(cuid())
-  title     String
-  pdfUrl    String // URL of the uploaded PDF (Cloudinary, Google Drive, etc.)
-  subjectId String
-  subject   Subject  @relation(fields: [subjectId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  title       String
+  pdfUrl      String
+  subjectCode String
+  publicId    String
+  subject     Subject  @relation(fields: [subjectCode], references: [code])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Cohort {
+  cohortNo    Int          @id @default(autoincrement()) // primary key
+  semester    Int
+  term        Int
+  users       User[]       // Users in this cohort
+  assignments Assignment[] // Assignments for this cohort
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model UserAssignment {
+  id           String      @id @default(cuid())
+  userId       String
+  assignmentId String
+  completed    Boolean     @default(false) // completion status
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id])
+  assignment  Assignment  @relation(fields: [assignmentId], references: [id])
+
+  @@unique([userId, assignmentId]) // only one entry per user-assignment
 }

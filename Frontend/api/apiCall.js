@@ -56,3 +56,13 @@ export const GetAssignments = async (cohort) => {
     return {};
   }
 };
+
+export const GetSubjects = async () =>{
+  try{
+
+  }
+  catch(error){
+    
+  }
+}
+

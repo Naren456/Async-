@@ -1,7 +1,204 @@
-[
-  { "code": "ZC219", "name": "Discrete Mathematics", "semester": 1, "term": 1},
-  { "code": "ZC230", "name": "Linear Algebra and Optimization", "semester": 1, "term": 2 },
-  { "code": "ZC228", "name": "Introduction to Computing Systems", "semester": 1, "term": 2 },
-  { "code": "ZC111", "name": "Basic Electronics", "semester": 1, "term": 2 },
-  { "code": "ZC239", "name": "Writing Practice", "semester": 1, "term": 1 }
-]
+
+   [
+    {
+      "id": "cmfr17yie0000mf2brv6exg8o",
+      "code": "ZC313",
+      "name": "Introduction to Programming",
+      "semester": 1,
+      "term": 1,
+      "createdAt": "2025-09-19T16:06:22.838Z",
+      "updatedAt": "2025-09-19T16:06:22.838Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1idzn0000mfcynj3omltj",
+      "code": "ZC219",
+      "name": "Discrete Mathematics",
+      "semester": 1,
+      "term": 1,
+      "createdAt": "2025-09-19T16:14:29.460Z",
+      "updatedAt": "2025-09-19T16:14:29.460Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ie2f0001mfcyn8qjn614",
+      "code": "ZC230",
+      "name": "Linear Algebra and Optimization",
+      "semester": 1,
+      "term": 2,
+      "createdAt": "2025-09-19T16:14:29.559Z",
+      "updatedAt": "2025-09-19T16:14:29.559Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ie3o0002mfcyefssdn99",
+      "code": "ZC228",
+      "name": "Introduction to Computing Systems",
+      "semester": 1,
+      "term": 2,
+      "createdAt": "2025-09-19T16:14:29.605Z",
+      "updatedAt": "2025-09-19T16:14:29.605Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ie4y0003mfcyckij9d8m",
+      "code": "ZC111",
+      "name": "Basic Electronics",
+      "semester": 1,
+      "term": 2,
+      "createdAt": "2025-09-19T16:14:29.651Z",
+      "updatedAt": "2025-09-19T16:14:29.651Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ie6b0004mfcyr3urzui2",
+      "code": "ZC239",
+      "name": "Writing Practice",
+      "semester": 1,
+      "term": 1,
+      "createdAt": "2025-09-19T16:14:29.700Z",
+      "updatedAt": "2025-09-19T16:14:29.700Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ma1r0000mfj5fdw8isv8",
+      "code": "ZC311",
+      "name": "Data Structures and Algorithms",
+      "semester": 2,
+      "term": 2,
+      "createdAt": "2025-09-19T16:17:30.975Z",
+      "updatedAt": "2025-09-19T16:17:30.975Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ma4f0001mfj53s3b8d5c",
+      "code": "ZC316",
+      "name": "Object Oriented Programming",
+      "semester": 2,
+      "term": 1,
+      "createdAt": "2025-09-19T16:17:31.072Z",
+      "updatedAt": "2025-09-19T16:17:31.072Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ma5q0002mfj5nd3jfil3",
+      "code": "ZC215",
+      "name": "Command Line Interfaces and Scripting",
+      "semester": 2,
+      "term": 2,
+      "createdAt": "2025-09-19T16:17:31.118Z",
+      "updatedAt": "2025-09-19T16:17:31.118Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ma710003mfj5ifav3x5w",
+      "code": "ZC233",
+      "name": "Probability and Statistics",
+      "semester": 2,
+      "term": 1,
+      "createdAt": "2025-09-19T16:17:31.165Z",
+      "updatedAt": "2025-09-19T16:17:31.165Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ma8b0004mfj5if4wczx5",
+      "code": "ZC112",
+      "name": "Introduction to Logic",
+      "semester": 2,
+      "term": 1,
+      "createdAt": "2025-09-19T16:17:31.211Z",
+      "updatedAt": "2025-09-19T16:17:31.211Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1ma9k0005mfj5mw73ve1f",
+      "code": "ZC240",
+      "name": "General Physics",
+      "semester": 2,
+      "term": 2,
+      "createdAt": "2025-09-19T16:17:31.257Z",
+      "updatedAt": "2025-09-19T16:17:31.257Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1maav0006mfj5l8hqwih5",
+      "code": "ZC223",
+      "name": "General Biology",
+      "semester": 2,
+      "term": 2,
+      "createdAt": "2025-09-19T16:17:31.303Z",
+      "updatedAt": "2025-09-19T16:17:31.303Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4ct0000mfr08gabkh4l",
+      "code": "ZC212",
+      "name": "Algorithm Design",
+      "semester": 3,
+      "term": 1,
+      "createdAt": "2025-09-19T16:20:30.221Z",
+      "updatedAt": "2025-09-19T16:20:30.221Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4fd0001mfr05u9kib3t",
+      "code": "ZC317",
+      "name": "Relational Databases",
+      "semester": 3,
+      "term": 2,
+      "createdAt": "2025-09-19T16:20:30.314Z",
+      "updatedAt": "2025-09-19T16:20:30.314Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4gm0002mfr07lx58cq5",
+      "code": "ZC238",
+      "name": "Web Programming",
+      "semester": 3,
+      "term": 1,
+      "createdAt": "2025-09-19T16:20:30.359Z",
+      "updatedAt": "2025-09-19T16:20:30.359Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4hz0003mfr0d4i1ap0v",
+      "code": "ZC236",
+      "name": "Software Design Principles",
+      "semester": 3,
+      "term": 2,
+      "createdAt": "2025-09-19T16:20:30.408Z",
+      "updatedAt": "2025-09-19T16:20:30.408Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4je0004mfr0h1k7q3h0",
+      "code": "ZC216",
+      "name": "Computer Systems and Performance",
+      "semester": 3,
+      "term": 1,
+      "createdAt": "2025-09-19T16:20:30.458Z",
+      "updatedAt": "2025-09-19T16:20:30.458Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4km0005mfr0yqnl3beu",
+      "code": "ZC113",
+      "name": "Online Social Media",
+      "semester": 3,
+      "term": 2,
+      "createdAt": "2025-09-19T16:20:30.503Z",
+      "updatedAt": "2025-09-19T16:20:30.503Z",
+      "notes": []
+    },
+    {
+      "id": "cmfr1q4lw0006mfr0zuu9cw1z",
+      "code": "ZC114",
+      "name": "Video Games - Technology and Social Impacts",
+      "semester": 3,
+      "term": 2,
+      "createdAt": "2025-09-19T16:20:30.549Z",
+      "updatedAt": "2025-09-19T16:20:30.549Z",
+      "notes": []
+    }
+  ]
+
