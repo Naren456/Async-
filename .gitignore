@@ -16,3 +16,7 @@
 /Backend/assignments.js
 /Backend/subject.js
 /Backend/upload.js
+.gitignore
+.vscode
+/Backend/.gitignore
+/Frontend/.gitignore
