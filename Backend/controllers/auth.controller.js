@@ -1,6 +1,7 @@
 import prisma from "../config/db.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../config/token.js";
+import jwt from 'jsonwebtoken';
 
 // ---------------- SIGNUP ----------------
 export const signup = async (req, res) => {
@@ -67,5 +68,38 @@ export const signin = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ---------------- UPDATE PROFILE (AUTH REQUIRED) ----------------
+export const updateProfile = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: 'No token provided' });
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'portsyncsecret');
+    const userId = decoded.userId;
+
+    const { name, email, cohortNo, semester, term } = req.body;
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined ? { name } : {}),
+        ...(email !== undefined ? { email } : {}),
+        ...(cohortNo !== undefined ? { cohortNo: Number(cohortNo) } : {}),
+        ...(semester !== undefined ? { semester: Number(semester) } : {}),
+        ...(term !== undefined ? { term: Number(term) } : {}),
+      },
+    });
+
+    return res.json({ 
+      user: { id: updated.id, email: updated.email, name: updated.name, role: updated.role, cohortNo: updated.cohortNo, semester: updated.semester, term: updated.term }
+    });
+  } catch (error) {
+    console.error(error);
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid or expired token' });
+    }
+    res.status(500).json({ message: 'Server error updating profile' });
   }
 };

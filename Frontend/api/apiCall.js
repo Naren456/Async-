@@ -59,10 +59,72 @@ export const GetAssignments = async (cohort) => {
 
 export const GetSubjects = async () =>{
   try{
-
+    const response = await api.get('/api/subjects');
+    return response.data;
   }
   catch(error){
-    
+    console.error('GetSubjects Error:', error);
+    if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
+      throw new Error('Cannot connect to server. Please check your internet connection.');
+    }
+    throw error.response?.data || { message: 'Something went wrong' };
   }
 }
+
+export const GetUserSubjectsWithNotes = async (userId, opts = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (opts.semester !== undefined && opts.term !== undefined) {
+      params.set('semester', String(opts.semester));
+      params.set('term', String(opts.term));
+    }
+    const qs = params.toString();
+    const url = qs ? `/api/subjects/user/${userId}?${qs}` : `/api/subjects/user/${userId}`;
+    const response = await api.get(url);
+    return response.data; // { subjects: [{ code, name, notes: [...] }...] }
+  } catch (error) {
+    console.error('GetUserSubjectsWithNotes Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+}
+
+export const GetSubjectById = async (subjectId) => {
+  try {
+    const response = await api.get(`/api/subjects/${subjectId}`);
+    return response.data; // { subject }
+  } catch (error) {
+    console.error('GetSubjectById Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+}
+
+// Get assignments by cohort, grouped by date (server-side)
+export const GetAssignmentsByCohort = async (cohortNo) => {
+  try {
+    const response = await api.get(`/api/assignments/by-cohort/${cohortNo}`);
+    return response.data; // { success, cohortNo, grouped }
+  } catch (error) {
+    console.error('GetAssignmentsByCohort Error:', error);
+    if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
+      throw new Error('Cannot connect to server. Please check your internet connection.');
+    }
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
+
+// Update current user's profile
+export const UpdateProfile = async (token, payload) => {
+  try {
+    const response = await api.put('/api/auth/me', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; // { user }
+  } catch (error) {
+    console.error('UpdateProfile Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
 

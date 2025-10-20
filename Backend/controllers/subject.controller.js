@@ -21,35 +21,47 @@ export const getAllSubjects = async (req, res) => {
 };
 
 // ---------------- GET SUBJECTS FOR USER ----------------
-// Only subjects <= user's semester & term
+// Only subjects <= user's semester
 export const getUserSubjects = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // fetch user to get semester & term
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // fetch subjects eligible for this user
+    // Optional overrides via query params (?semester=&term=)
+    const qpSemesterRaw = req.query.semester;
+    const qpTermRaw = req.query.term;
+    const qpSemester = qpSemesterRaw !== undefined ? Number(qpSemesterRaw) : undefined;
+    const qpTerm = qpTermRaw !== undefined ? Number(qpTermRaw) : undefined;
+    const effectiveSemester = Number.isFinite(qpSemester) ? qpSemester : user.semester;
+    const effectiveTerm = Number.isFinite(qpTerm) ? qpTerm : user.term;
+
+    // Exact when both provided, else only subjects with semester <= effectiveSemester
+    const whereClause = (qpSemester !== undefined && qpTerm !== undefined)
+      ? {
+          AND: [
+            { semester: { equals: effectiveSemester } },
+            { term: { equals: effectiveTerm } },
+          ],
+        }
+      : {
+          semester: { lte: effectiveSemester },
+        };
+
     const subjects = await prisma.subject.findMany({
-      where: {
-        semester: { lte: user.semester },
-        term: { lte: user.term },
-      },
-      include: {
-        notes: true, // include notes if needed
-      },
-      orderBy: {
-        semester: "asc",
-      },
+      where: whereClause,
+      include: { notes: true },
+      orderBy: [
+        { semester: 'asc' },
+        { term: 'asc' },
+        { code: 'asc' },
+      ],
     });
 
-    res.json({ subjects });
+    res.json({ subjects, filters: { semester: effectiveSemester, term: effectiveTerm }, mode: (qpSemester !== undefined && qpTerm !== undefined) ? 'exact' : 'inclusive' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error fetching user subjects" });
@@ -87,7 +99,7 @@ export const getSubjectById = async (req, res) => {
   try {
     const { subjectId } = req.params;
     const subject = await prisma.subject.findUnique({
-      where: { id: subjectId },
+      where: { code: subjectId },
       include: { notes: true },
     });
 

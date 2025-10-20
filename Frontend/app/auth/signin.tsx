@@ -8,7 +8,9 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { BookOpen, Mail, Lock, Eye, EyeOff } from "lucide-react-native";
 import { AuthsignIn } from "@/api/apiCall";
-
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/reducer';
+ import { showLoginNotification } from "../../utils/notifications";
 // Validation schema
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -21,6 +23,7 @@ const SignInSchema = Yup.object().shape({
 
 export default function SignIn() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,10 +37,8 @@ export default function SignIn() {
     try {
       const result = await AuthsignIn(values);
       console.log("SignIn Success:", result);
-
-      // Store user data in the store
-      // TODO: Add your state management here
-
+      dispatch(setUser(result));
+      await showLoginNotification(result.user.name); 
       router.push("/(tabs)/home");
     } catch (e: any) {
       const errorMsg = e.response?.data?.message || e.message || "Something went wrong";

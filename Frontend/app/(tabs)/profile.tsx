@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser, updateUser, setUser } from '@/store/reducer';
+import { UpdateProfile } from '@/api/apiCall';
 import { 
   User, 
   Mail, 
@@ -29,6 +32,8 @@ import {
 
 const Profile = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.user);
   
   const [isLoading, setIsLoading] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -52,8 +57,7 @@ const Profile = () => {
           onPress: async () => {
             setIsLoading(true);
             try {
-              // Clear user data
-            
+              dispatch(clearUser());
               // Navigate to login screen
               router.replace('/');
             } catch (error) {
@@ -69,28 +73,36 @@ const Profile = () => {
   };
 
   const handleEditProfile = () => {
-    setEditName( '');
-    setEditEmail( '');
+    setEditName(user?.name || '');
+    setEditEmail(user?.email || '');
     setEditModalVisible(true);
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     if (!editName.trim() || !editEmail.trim()) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    // Update user data in store
-    // if (user) {
-    //   setUser({
-    //     ...user,
-    //     name: editName.trim(),
-    //     email: editEmail.trim(),
-    //   });
-    // }
-
-    setEditModalVisible(false);
-    Alert.alert("Success", "Profile updated successfully");
+    try {
+      setIsLoading(true);
+      const result = await UpdateProfile(user?.token, {
+        name: editName.trim(),
+        email: editEmail.trim(),
+      });
+      if (result?.user) {
+        dispatch(setUser({ user: result.user, token: user?.token }));
+      } else {
+        dispatch(updateUser({ name: editName.trim(), email: editEmail.trim() }));
+      }
+      setEditModalVisible(false);
+      Alert.alert("Success", "Profile updated successfully");
+    } catch (e: any) {
+      const msg = e?.message || 'Failed to update profile';
+      Alert.alert('Error', msg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const ProfileSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -158,10 +170,10 @@ const Profile = () => {
               </View>
               <View className="flex-1">
                 <Text className="text-white text-xl font-semibold">
-                  { 'User'}
+                  { user?.name || 'User'}
                 </Text>
                 <Text className="text-gray-400 text-sm mt-1">
-                  { 'user@example.com'}
+                  { user?.email || 'user@example.com'}
                 </Text>
               </View>
               <TouchableOpacity 
@@ -177,7 +189,7 @@ const Profile = () => {
               <View className="flex-row items-center">
                 <Calendar size={16} color="#6B7280" />
                 <Text className="text-gray-400 text-sm ml-2">
-                  Cohort { 4}
+                  Cohort { user?.cohortNo ?? '-'}
                 </Text>
               </View>
               <View className="bg-green-600/20 px-3 py-1 rounded-full">

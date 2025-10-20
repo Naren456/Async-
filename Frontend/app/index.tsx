@@ -8,9 +8,14 @@ import { BookOpen, Calendar, Bell, BarChart3 } from 'lucide-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const { width, height } = Dimensions.get('window');
+import { registerForNotifications } from "../utils/notifications";
+import { useEffect } from 'react';
 
 export default function Index() {
   const router = useRouter();
+  useEffect(() => {
+  registerForNotifications();
+}, []);
 
   return (
 
