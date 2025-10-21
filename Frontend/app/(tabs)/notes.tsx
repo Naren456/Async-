@@ -55,7 +55,7 @@ const Notes = () => {
             : {}
         );
         setSubjects(data.subjects || []);
-        console.log(data.subjects)
+        // console.log(data.subjects)
       } catch (e: any) {
         setError(e?.message || 'Failed to load notes');
       } finally {

@@ -98,6 +98,36 @@ export const GetSubjectById = async (subjectId) => {
   }
 }
 
+// Admin API functions
+export const CreateAssignment = async (token, assignmentData) => {
+  try {
+    const response = await api.post('/api/assignments', assignmentData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('CreateAssignment Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
+
+export const GetAdminStats = async (token) => {
+  try {
+    const response = await api.get('/api/admin/stats', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('GetAdminStats Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
+
 // Get assignments by cohort, grouped by date (server-side)
 export const GetAssignmentsByCohort = async (cohortNo) => {
   try {

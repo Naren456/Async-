@@ -1,4 +1,3 @@
-// app/(tabs)/home.tsx
 import React, { useEffect, useState, useCallback } from "react";
 import {
   Text,
@@ -9,31 +8,29 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import AssignmentCard from "../../components/AssignmentCard";
 import { GetAssignmentsByCohort } from "../../api/apiCall";
-import { Assignment as BaseAssignment, syncAssignment } from "../../utils/notifications";
 
-// Extend Assignment type for local display
-export type Assignment = BaseAssignment & {
+// --- Local Types ---
+export type Assignment = {
+  id: string;
+  title: string;
+  subject: string;
+  isoDate: string;
   displayDate: string;
   link: string;
 };
 
-// AsyncStorage key
-const ASSIGNMENTS_KEY = "assignments";
-
-// Grouped assignments type
 type GroupedAssignments = Record<string, Assignment[]>;
 
-const Home = () => {
+const home = () => {
   const cohortNo = useSelector((state: any) => state.user?.cohortNo);
   const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Transform API response to local Assignment type
+  // --- Transform API response to local type ---
   const transformGrouped = (grouped: any): GroupedAssignments => {
     const result: GroupedAssignments = {};
     Object.entries(grouped || {}).forEach(([date, items]: any) => {
@@ -62,7 +59,7 @@ const Home = () => {
     return result;
   };
 
-  // Fetch assignments
+  // --- Load assignments (API only) ---
   const loadAssignments = async () => {
     setLoading(true);
     setError(null);
@@ -71,37 +68,28 @@ const Home = () => {
       const data = await GetAssignmentsByCohort(cohortNo);
       const grouped = transformGrouped(data.grouped);
       setGroupedAssignments(grouped);
-
-      // Cache locally
-      await AsyncStorage.setItem(ASSIGNMENTS_KEY, JSON.stringify(grouped));
-
-      // Schedule notifications
-      Object.values(grouped)
-        .flat()
-        .filter(a => new Date(a.isoDate) > new Date())
-        .forEach(a => syncAssignment(a));
-
     } catch (err) {
-      console.error("Error loading assignments:", err);
+      console.error("❌ Error loading assignments:", err);
       setError("Failed to load assignments. Pull down to refresh.");
-
-      const cached = await AsyncStorage.getItem(ASSIGNMENTS_KEY);
-      if (cached) setGroupedAssignments(JSON.parse(cached));
     } finally {
       setLoading(false);
     }
   };
 
+  // --- On mount ---
   useEffect(() => {
-    if (cohortNo != null) loadAssignments();
+    if (!cohortNo) return;
+    loadAssignments();
   }, [cohortNo]);
 
+  // --- Pull to refresh ---
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadAssignments();
     setRefreshing(false);
   }, [cohortNo]);
 
+  // --- UI Rendering ---
   return (
     <SafeAreaView className="flex-1 bg-[#0f172b] px-2">
       <View className="px-2 py-3 flex-row justify-between items-center">
@@ -131,7 +119,9 @@ const Home = () => {
           </View>
         ) : error ? (
           <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-red-400 text-base text-center mb-4">{error}</Text>
+            <Text className="text-red-400 text-base text-center mb-4">
+              {error}
+            </Text>
             <Text className="text-gray-400 text-sm text-center">
               Pull down to refresh
             </Text>
@@ -173,4 +163,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default home;
