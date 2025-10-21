@@ -12,27 +12,20 @@ import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AssignmentCard from "../../components/AssignmentCard";
 import { GetAssignmentsByCohort } from "../../api/apiCall";
-import {
-  scheduleAssignmentNotifications,
-  registerForNotifications,
-} from "../../utils/notifications";
+import { Assignment as BaseAssignment, syncAssignment } from "../../utils/notifications";
 
-// ----- Types -----
-type Assignment = {
-  id: string;
-  title: string;
-  subject: string;
-  link: string;
-  isoDate: string;
+// Extend Assignment type for local display
+export type Assignment = BaseAssignment & {
   displayDate: string;
+  link: string;
 };
-
-type GroupedAssignments = Record<string, Assignment[]>;
 
 // AsyncStorage key
 const ASSIGNMENTS_KEY = "assignments";
 
-// ----- Component -----
+// Grouped assignments type
+type GroupedAssignments = Record<string, Assignment[]>;
+
 const Home = () => {
   const cohortNo = useSelector((state: any) => state.user?.cohortNo);
   const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
@@ -40,7 +33,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Transform API data to Assignment[]
+  // Transform API response to local Assignment type
   const transformGrouped = (grouped: any): GroupedAssignments => {
     const result: GroupedAssignments = {};
     Object.entries(grouped || {}).forEach(([date, items]: any) => {
@@ -60,9 +53,9 @@ const Home = () => {
           id: a.id,
           title: a.title,
           subject: a.subject?.name || a.subject?.code || "Subject",
-          link: a.link || "",
           isoDate: iso,
           displayDate: display,
+          link: a.link || "",
         } as Assignment;
       });
     });
@@ -73,44 +66,35 @@ const Home = () => {
   const loadAssignments = async () => {
     setLoading(true);
     setError(null);
+
     try {
       const data = await GetAssignmentsByCohort(cohortNo);
       const grouped = transformGrouped(data.grouped);
       setGroupedAssignments(grouped);
 
-      // Store in AsyncStorage
+      // Cache locally
       await AsyncStorage.setItem(ASSIGNMENTS_KEY, JSON.stringify(grouped));
 
-      // Schedule notifications only for future assignments
-      const futureAssignments = Object.values(grouped)
+      // Schedule notifications
+      Object.values(grouped)
         .flat()
-        .filter(a => new Date(a.isoDate) > new Date());
-
-      futureAssignments.forEach(a => scheduleAssignmentNotifications(a));
+        .filter(a => new Date(a.isoDate) > new Date())
+        .forEach(a => syncAssignment(a));
 
     } catch (err) {
       console.error("Error loading assignments:", err);
       setError("Failed to load assignments. Pull down to refresh.");
 
-      // Load from AsyncStorage if API fails
       const cached = await AsyncStorage.getItem(ASSIGNMENTS_KEY);
-      if (cached) {
-        setGroupedAssignments(JSON.parse(cached));
-      }
+      if (cached) setGroupedAssignments(JSON.parse(cached));
     } finally {
       setLoading(false);
     }
   };
 
-  // Load assignments when cohort changes
   useEffect(() => {
     if (cohortNo != null) loadAssignments();
   }, [cohortNo]);
-
-  // Register for notifications once on app start
-  useEffect(() => {
-    registerForNotifications();
-  }, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -120,7 +104,6 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-[#0f172b] px-2">
-      {/* Header */}
       <View className="px-2 py-3 flex-row justify-between items-center">
         <Text className="text-xl font-bold text-gray-100 tracking-wide">
           Upcoming Deadlines
@@ -173,7 +156,7 @@ const Home = () => {
                 })()}
               </Text>
 
-              {(assignments as Assignment[]).map((assignment) => (
+              {assignments.map((assignment) => (
                 <AssignmentCard
                   key={assignment.id}
                   title={assignment.title}

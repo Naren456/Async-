@@ -17,12 +17,12 @@ export const createAssignment = async (req, res) => {
 
     res.status(201).json({ success: true, assignment });
   } catch (err) {
-    console.error("❌ Error creating assignment:", err);
+    console.error(" Error creating assignment:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// GET /assignments/by-cohort/:cohortNo - group by dueDate (YYYY-MM-DD)
+// GET /assignments/by-cohort/:cohortNo 
 export const getAssignmentsByCohortGrouped = async (req, res) => {
   try {
     const { cohortNo } = req.params;
@@ -46,7 +46,7 @@ export const getAssignmentsByCohortGrouped = async (req, res) => {
 
     return res.json({ success: true, cohortNo: cohort, grouped });
   } catch (err) {
-    console.error('❌ Error fetching assignments:', err);
+    console.error(' Error fetching assignments:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 };

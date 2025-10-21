@@ -1,42 +1,38 @@
-import React from 'react';
-import { Text, View, TouchableOpacity, Image, Dimensions } from "react-native";
+import React, { useEffect } from "react";
+import { Text, View, TouchableOpacity, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
-import { BookOpen, Calendar, Bell, BarChart3 } from 'lucide-react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-const { width, height } = Dimensions.get('window');
-import { registerForNotifications } from "../utils/notifications";
-import { useEffect } from 'react';
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
+import { BookOpen } from "lucide-react-native";
+
+
+
+
+const { width, height } = Dimensions.get("window");
 
 export default function Index() {
   const router = useRouter();
-  useEffect(() => {
-  registerForNotifications();
-}, []);
 
+ 
   return (
-
     <SafeAreaView className="flex-1 bg-blue-900">
       <StatusBar style="light" />
-     <LinearGradient
-       colors={["#1e3a8a", "#2563eb", "#60a5fa"]}
-       locations={[0, 0.5, 1]}
-       style={{ flex: 1 }}
-     >
+      <LinearGradient
+        colors={["#1e3a8a", "#2563eb", "#60a5fa"]}
+        locations={[0, 0.5, 1]}
+        style={{ flex: 1 }}
+      >
         <View className="flex-1 items-center justify-center px-8">
           {/* Header Section */}
           <View className="justify-center items-center mb-16">
-            {/* Logo Container with Academic Theme */}
+            {/* Logo Container */}
             <View className="mb-6 p-5 rounded-full bg-white/15 backdrop-blur-sm">
-              {/* Academic-themed icon */}
               <View className="w-16 h-16 rounded-full bg-white/25 items-center justify-center">
                 <BookOpen size={32} color="white" strokeWidth={2} />
               </View>
             </View>
-            
+
             <Text className="text-5xl font-bold text-white mb-4 tracking-wide">
               ASync
             </Text>
@@ -47,18 +43,16 @@ export default function Index() {
               Smart reminders for academic success
             </Text>
           </View>
-          
-      
-          
-          {/* Action Buttons Container */}
+
+          {/* Buttons */}
           <View className="w-full max-w-sm">
-            {/* Get Started Button */}
-            <TouchableOpacity 
+            {/* Get Started */}
+            <TouchableOpacity
               className="w-full py-4 rounded-2xl shadow-lg mb-4 bg-white"
-              onPress={() => router.push('/auth/signup')}
+              onPress={() => router.push("/auth/signup")}
               activeOpacity={0.8}
               style={{
-                shadowColor: '#000',
+                shadowColor: "#000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
@@ -70,10 +64,10 @@ export default function Index() {
               </Text>
             </TouchableOpacity>
 
-            {/* Sign In Button */}
+            {/* Sign In */}
             <TouchableOpacity
               className="w-full py-4 rounded-2xl border-2 border-white/30 mb-6"
-              onPress={() => router.push('/auth/signin')}
+              onPress={() => router.push("/auth/signin")}
               activeOpacity={0.8}
             >
               <Text className="text-lg font-semibold text-white text-center">
@@ -81,7 +75,6 @@ export default function Index() {
               </Text>
             </TouchableOpacity>
 
-            {/* Student-friendly note */}
             <View className="items-center">
               <Text className="text-sm text-white/70 text-center leading-5">
                 Join thousands of students staying organized
@@ -94,9 +87,7 @@ export default function Index() {
         <View className="absolute top-24 right-12 w-16 h-16 rounded-full bg-white/5" />
         <View className="absolute top-44 left-10 w-10 h-10 rounded-full bg-white/5" />
         <View className="absolute bottom-36 right-8 w-14 h-14 rounded-full bg-white/5" />
-        
       </LinearGradient>
     </SafeAreaView>
-
   );
 }

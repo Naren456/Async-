@@ -10,7 +10,7 @@ import { BookOpen, Mail, Lock, Eye, EyeOff } from "lucide-react-native";
 import { AuthsignIn } from "@/api/apiCall";
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/reducer';
- import { showLoginNotification } from "../../utils/notifications";
+//  import { showLoginNotification } from "../../utils/notifications";
 // Validation schema
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -38,7 +38,7 @@ export default function SignIn() {
       const result = await AuthsignIn(values);
       console.log("SignIn Success:", result);
       dispatch(setUser(result));
-      await showLoginNotification(result.user.name); 
+      // await showLoginNotification(result.user.name); 
       router.push("/(tabs)/home");
     } catch (e: any) {
       const errorMsg = e.response?.data?.message || e.message || "Something went wrong";
