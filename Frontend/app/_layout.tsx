@@ -9,7 +9,16 @@ export default function RootLayout() {
     <Provider store={store}>
       <Stack screenOptions={{headerShown:false}}>
         <Stack.Screen name="index"/>
-        <Stack.Screen name="(tabs)"/> 
+        <Stack.Screen name="auth/signin"/> 
+        <Stack.Screen name="auth/signup"/> 
+        <Stack.Screen name="user"/>
+        <Stack.Screen name="admin" options={{ presentation: 'modal' }}/> 
+        <Stack.Screen name="admin/assignments" options={{ presentation: 'modal' }}/> 
+        <Stack.Screen name="admin/subjects" options={{ presentation: 'modal' }}/> 
+        <Stack.Screen name="admin/users" options={{ presentation: 'modal' }}/> 
+        <Stack.Screen name="admin/analytics" options={{ presentation: 'modal' }}/> 
+        <Stack.Screen name="note/[id]"/>
+        <Stack.Screen name="pdf/[id]"/>
       </Stack>
     </Provider>
   )

@@ -1,96 +1,139 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Text,
   View,
   ScrollView,
   TouchableOpacity,
-  TextInput,
-  Alert,
+  TextInput,       
   ActivityIndicator,
-  Modal,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useSelector } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import {
-  Plus,
-  Calendar,
-  BookOpen,
-  Users,
-  Link,
-  ArrowLeft,
-  Save,
-} from 'lucide-react-native';
+  Alert,
+  RefreshControl,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { ArrowLeft, Trash2, Edit3 } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { GetAssignmentsByCohort, DeleteAssignment } from "../../api/apiCall";
 
-const AssignmentSchema = Yup.object().shape({
-  title: Yup.string().required('Title is required'),
-  description: Yup.string().required('Description is required'),
-  dueDate: Yup.string().required('Due date is required'),
-  cohortNo: Yup.number().required('Cohort is required'),
-  subjectCode: Yup.string().required('Subject is required'),
-  link: Yup.string().url('Must be a valid URL').required('Link is required'),
-});
+export type Assignment = {
+  id: string;
+  title: string;
+  subject: string;
+  isoDate: string;
+  displayDate: string;
+  link: string;
+};
+
+type GroupedAssignments = Record<string, Assignment[]>;
 
 const AdminAssignments = () => {
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
+
+  const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
   const [loading, setLoading] = useState(false);
-  const [subjects, setSubjects] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [cohortFilter, setCohortFilter] = useState("4");
+
+  // Transform API grouped response into clean object
+  const transformGrouped = (grouped: any): GroupedAssignments => {
+    const result: GroupedAssignments = {};
+    Object.entries(grouped || {}).forEach(([date, items]: any) => {
+      result[date] = (items as any[]).map((a: any) => {
+        const iso = a.dueDate ? new Date(a.dueDate).toISOString() : "";
+        const display = a.dueDate
+          ? new Date(a.dueDate).toLocaleString(undefined, {
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "No due date";
+        return {
+          id: a.id,
+          title: a.title,
+          subject: a.subject?.name || a.subject?.code || "Subject",
+          link: a.link || "",
+          isoDate: iso,
+          displayDate: display,
+        } as Assignment;
+      });
+    });
+    return result;
+  };
+
+  // Load assignments
+  const loadAssignments = async () => {
+    if (!cohortFilter) return;
+    setLoading(true);
+    setError("");
+    try {
+      const data = await GetAssignmentsByCohort(Number(cohortFilter));
+      setGroupedAssignments(transformGrouped(data.grouped));
+    } catch (err) {
+      console.error("Error loading assignments:", err);
+      setError("Failed to load assignments. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Pull-to-refresh
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadAssignments();
+    setRefreshing(false);
+  }, [cohortFilter]);
 
   useEffect(() => {
-    if (user?.role !== 'TEACHER') {
-      Alert.alert('Access Denied', 'Admin access required');
-      router.replace('/(tabs)/home');
+    if (!user?.id) return;
+    if (user?.role !== "TEACHER") {
+      Alert.alert("Access Denied", "Teacher access required");
+      router.replace("/");
       return;
     }
-    loadData();
-  }, [user]);
+    loadAssignments();
+  }, [user?.id, user?.role, cohortFilter]);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      // TODO: Load subjects and assignments from API
-      setSubjects([
-        { code: 'CS101', name: 'Programming Fundamentals' },
-        { code: 'CS102', name: 'Data Structures' },
-        { code: 'CS103', name: 'Algorithms' },
-      ]);
-      setAssignments([]);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Edit -> Redirect to form page
+  const handleEdit = (a: Assignment) => {
+    router.push({
+      pathname: "/admin/assignmentForm",
+      params: {
+        id: a.id,
+        title: a.title,
+        dueDate: a.isoDate,
+        cohortNo: cohortFilter,
+        subjectCode: a.subject,
+        link: a.link,
+      },
+    });
   };
 
-  const handleCreateAssignment = async (values: any, { resetForm }: any) => {
-    setLoading(true);
-    try {
-      // TODO: Call API to create assignment
-      console.log('Creating assignment:', values);
-      Alert.alert('Success', 'Assignment created successfully');
-      setShowForm(false);
-      resetForm();
-      loadData();
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create assignment');
-    } finally {
-      setLoading(false);
-    }
+  // Delete
+  const handleDelete = async (id: string) => {
+    Alert.alert("Confirm Delete", "Are you sure you want to delete this assignment?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            setLoading(true);
+            await DeleteAssignment(user.token, id);
+            Alert.alert("Deleted", "Assignment deleted successfully");
+            loadAssignments();
+          } catch (e: any) {
+            Alert.alert("Error", e?.message || "Failed to delete assignment");
+          } finally {
+            setLoading(false);
+          }
+        },
+      },
+    ]);
   };
-
-  if (loading && !showForm) {
-    return (
-      <SafeAreaView className="flex-1 bg-[#0f172b] items-center justify-center">
-        <ActivityIndicator size="large" color="#3B82F6" />
-        <Text className="text-gray-400 mt-4">Loading assignments...</Text>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#0f172b]">
@@ -99,185 +142,84 @@ const AdminAssignments = () => {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <ArrowLeft size={24} color="#60A5FA" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-white">Manage Assignments</Text>
+        <Text className="text-xl font-bold text-white">Assignments</Text>
         <TouchableOpacity
-          onPress={() => setShowForm(true)}
-          className="p-2 bg-blue-600 rounded-full"
+          onPress={() => router.push("/admin/assignmentForm")}
+          className="px-3 py-2 bg-blue-600 rounded-lg"
         >
-          <Plus size={20} color="white" />
+          <Text className="text-white font-medium">+ New</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-4"
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        {/* Cohort Filter */}
+        <View className="my-4">
+          <Text className="text-white text-base font-semibold mb-2">Select Cohort</Text>
+          <View className="flex-row items-center justify-between bg-[#1e293b] rounded-xl p-3 border border-white/10">
+            <TextInput
+              value={cohortFilter}
+              onChangeText={setCohortFilter}
+              className="text-white flex-1"
+              placeholder="Enter cohort number"
+              placeholderTextColor="#6B7280"
+            />
+            <TouchableOpacity
+              onPress={loadAssignments}
+              className="ml-3 px-3 py-2 bg-blue-600 rounded-lg"
+            >
+              <Text className="text-white font-medium">Load</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Assignment List */}
-        <View className="py-4">
-          {assignments.length === 0 ? (
-            <View className="bg-[#1e293b] rounded-xl p-6 border border-white/10">
-              <Text className="text-gray-400 text-center">No assignments created yet</Text>
+        <View className="mt-4 mb-6">
+          <Text className="text-white text-base font-semibold mb-2">
+            Cohort {cohortFilter} Assignments
+          </Text>
+
+          {loading ? (
+            <View className="flex-1 justify-center items-center py-20">
+              <ActivityIndicator size="large" color="#3B82F6" />
+              <Text className="text-gray-400 mt-4 text-base">Loading assignments...</Text>
             </View>
+          ) : error ? (
+            <Text className="text-red-400 text-center">{error}</Text>
+          ) : Object.keys(groupedAssignments).length === 0 ? (
+            <Text className="text-gray-400">No upcoming assignments</Text>
           ) : (
-            assignments.map((assignment: any) => (
-              <View key={assignment.id} className="bg-[#1e293b] rounded-xl p-4 mb-3 border border-white/10">
-                <Text className="text-white text-lg font-semibold">{assignment.title}</Text>
-                <Text className="text-gray-400 text-sm mt-1">{assignment.description}</Text>
-                <View className="flex-row items-center mt-3">
-                  <Calendar size={16} color="#60A5FA" />
-                  <Text className="text-gray-300 text-sm ml-2">Due: {assignment.dueDate}</Text>
-                </View>
+            Object.entries(groupedAssignments).map(([date, assignments]) => (
+              <View key={date} className="mb-6 bg-[#1e293b]/60 border border-white/10 p-4 rounded-xl">
+                <Text className="text-lg font-semibold text-blue-300 mb-3">{date}</Text>
+                {assignments.map((assign) => (
+                  <View
+                    key={assign.id}
+                    className="flex-row justify-between items-center mb-3 bg-[#0f172b] p-3 rounded-lg border border-white/10"
+                  >
+                    <View className="flex-1">
+                      <Text className="text-white font-medium">{assign.title}</Text>
+                      <Text className="text-gray-400 text-sm">{assign.subject}</Text>
+                      <Text className="text-gray-500 text-xs">{assign.displayDate}</Text>
+                    </View>
+                    <View className="flex-row space-x-3">
+                      <TouchableOpacity onPress={() => handleEdit(assign)}>
+                        <Edit3 color="#60A5FA" size={20} />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleDelete(assign.id)}>
+                        <Trash2 color="#EF4444" size={20} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
               </View>
             ))
           )}
         </View>
       </ScrollView>
-
-      {/* Create Assignment Modal */}
-      <Modal visible={showForm} animationType="slide" presentationStyle="pageSheet">
-        <SafeAreaView className="flex-1 bg-[#0f172b]">
-          <View className="flex-row items-center justify-between p-4 border-b border-white/10">
-            <TouchableOpacity onPress={() => setShowForm(false)}>
-              <Text className="text-blue-400 text-base">Cancel</Text>
-            </TouchableOpacity>
-            <Text className="text-white text-lg font-semibold">Create Assignment</Text>
-            <View style={{ width: 60 }} />
-          </View>
-
-          <ScrollView className="flex-1 p-4">
-            <Formik
-              initialValues={{
-                title: '',
-                description: '',
-                dueDate: '',
-                cohortNo: '',
-                subjectCode: '',
-                link: '',
-              }}
-              validationSchema={AssignmentSchema}
-              onSubmit={handleCreateAssignment}
-            >
-              {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-                <View>
-                  {/* Title */}
-                  <View className="mb-4">
-                    <Text className="text-white text-base font-medium mb-2">Title</Text>
-                    <TextInput
-                      value={values.title}
-                      onChangeText={handleChange('title')}
-                      onBlur={handleBlur('title')}
-                      className="bg-[#1e293b] text-white rounded-lg px-4 py-3 border border-white/10"
-                      placeholder="Assignment title"
-                      placeholderTextColor="#6B7280"
-                    />
-                    {errors.title && touched.title && (
-                      <Text className="text-red-400 text-sm mt-1">{errors.title}</Text>
-                    )}
-                  </View>
-
-                  {/* Description */}
-                  <View className="mb-4">
-                    <Text className="text-white text-base font-medium mb-2">Description</Text>
-                    <TextInput
-                      value={values.description}
-                      onChangeText={handleChange('description')}
-                      onBlur={handleBlur('description')}
-                      className="bg-[#1e293b] text-white rounded-lg px-4 py-3 border border-white/10"
-                      placeholder="Assignment description"
-                      placeholderTextColor="#6B7280"
-                      multiline
-                      numberOfLines={3}
-                    />
-                    {errors.description && touched.description && (
-                      <Text className="text-red-400 text-sm mt-1">{errors.description}</Text>
-                    )}
-                  </View>
-
-                  {/* Due Date */}
-                  <View className="mb-4">
-                    <Text className="text-white text-base font-medium mb-2">Due Date</Text>
-                    <TextInput
-                      value={values.dueDate}
-                      onChangeText={handleChange('dueDate')}
-                      onBlur={handleBlur('dueDate')}
-                      className="bg-[#1e293b] text-white rounded-lg px-4 py-3 border border-white/10"
-                      placeholder="YYYY-MM-DD"
-                      placeholderTextColor="#6B7280"
-                    />
-                    {errors.dueDate && touched.dueDate && (
-                      <Text className="text-red-400 text-sm mt-1">{errors.dueDate}</Text>
-                    )}
-                  </View>
-
-                  {/* Cohort */}
-                  <View className="mb-4">
-                    <Text className="text-white text-base font-medium mb-2">Cohort Number</Text>
-                    <TextInput
-                      value={values.cohortNo}
-                      onChangeText={handleChange('cohortNo')}
-                      onBlur={handleBlur('cohortNo')}
-                      className="bg-[#1e293b] text-white rounded-lg px-4 py-3 border border-white/10"
-                      placeholder="Cohort number"
-                      placeholderTextColor="#6B7280"
-                      keyboardType="numeric"
-                    />
-                    {errors.cohortNo && touched.cohortNo && (
-                      <Text className="text-red-400 text-sm mt-1">{errors.cohortNo}</Text>
-                    )}
-                  </View>
-
-                  {/* Subject */}
-                  <View className="mb-4">
-                    <Text className="text-white text-base font-medium mb-2">Subject</Text>
-                    <TextInput
-                      value={values.subjectCode}
-                      onChangeText={handleChange('subjectCode')}
-                      onBlur={handleBlur('subjectCode')}
-                      className="bg-[#1e293b] text-white rounded-lg px-4 py-3 border border-white/10"
-                      placeholder="Subject code (e.g., CS101)"
-                      placeholderTextColor="#6B7280"
-                    />
-                    {errors.subjectCode && touched.subjectCode && (
-                      <Text className="text-red-400 text-sm mt-1">{errors.subjectCode}</Text>
-                    )}
-                  </View>
-
-                  {/* Link */}
-                  <View className="mb-6">
-                    <Text className="text-white text-base font-medium mb-2">Assignment Link</Text>
-                    <TextInput
-                      value={values.link}
-                      onChangeText={handleChange('link')}
-                      onBlur={handleBlur('link')}
-                      className="bg-[#1e293b] text-white rounded-lg px-4 py-3 border border-white/10"
-                      placeholder="https://example.com/assignment"
-                      placeholderTextColor="#6B7280"
-                      keyboardType="url"
-                    />
-                    {errors.link && touched.link && (
-                      <Text className="text-red-400 text-sm mt-1">{errors.link}</Text>
-                    )}
-                  </View>
-
-                  {/* Submit Button */}
-                  <TouchableOpacity
-                    onPress={() => handleSubmit()}
-                    disabled={loading}
-                    className={`py-4 rounded-xl ${
-                      loading ? 'bg-gray-600' : 'bg-blue-600'
-                    }`}
-                    activeOpacity={0.8}
-                  >
-                    <View className="flex-row items-center justify-center">
-                      <Save size={20} color="white" />
-                      <Text className="text-white font-semibold ml-2">
-                        {loading ? 'Creating...' : 'Create Assignment'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </Formik>
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
     </SafeAreaView>
   );
 };

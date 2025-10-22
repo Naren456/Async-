@@ -39,7 +39,12 @@ export default function SignIn() {
       console.log("SignIn Success:", result);
       dispatch(setUser(result));
       // await showLoginNotification(result.user.name); 
-      router.push("/(tabs)/home");
+      // Redirect based on user role
+      if (result.user.role === 'TEACHER') {
+        router.replace("/admin");
+      } else {
+        router.replace("/user");
+      }
     } catch (e: any) {
       const errorMsg = e.response?.data?.message || e.message || "Something went wrong";
 

@@ -128,6 +128,51 @@ export const GetAdminStats = async (token) => {
   }
 };
 
+// Subjects (Admin)
+export const CreateSubject = async (token, subject) => {
+  try {
+    const response = await api.post('/api/subjects', subject, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('CreateSubject Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
+
+export const UpdateSubject = async (token, code, updates) => {
+  try {
+    const response = await api.put(`/api/subjects/${code}`, updates, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('UpdateSubject Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
+
+export const DeleteSubject = async (token, subjectId) => {
+  try {
+    const response = await api.delete(`/api/subjects/${subjectId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('DeleteSubject Error:', error);
+    throw error.response?.data || { message: 'Something went wrong' };
+  }
+};
+
 // Get assignments by cohort, grouped by date (server-side)
 export const GetAssignmentsByCohort = async (cohortNo) => {
   try {
@@ -157,4 +202,6 @@ export const UpdateProfile = async (token, payload) => {
     throw error.response?.data || { message: 'Something went wrong' };
   }
 };
+
+
 

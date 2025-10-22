@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useSelector } from 'react-redux';
+  RefreshControl,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useSelector, useDispatch } from "react-redux";
+import { clearUser } from "@/store/reducer";
 import {
   Settings,
   Users,
@@ -17,14 +19,19 @@ import {
   Calendar,
   BarChart3,
   Plus,
-  Edit,
-  Trash2,
-} from 'lucide-react-native';
+  LogOut,
+  Shield,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+} from "lucide-react-native";
 
-const AdminDashboard = () => {
+const AdminApp = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalSubjects: 0,
@@ -33,60 +40,116 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    if (user?.role !== 'TEACHER') {
-      Alert.alert('Access Denied', 'Admin access required');
-      router.replace('/(tabs)/home');
+    if (!user?.id) {
+      router.replace("/");
       return;
     }
+
+    if (user?.role !== "TEACHER") {
+      Alert.alert("Access Denied", "Admin access required");
+      router.replace("/");
+      return;
+    }
+
     loadStats();
-  }, [user]);
+  }, [user?.id, user?.role]);
 
   const loadStats = async () => {
     setLoading(true);
     try {
-      // TODO: Add API calls to get stats
+      const { GetAdminStats } = await import("@/api/apiCall");
+      const data = await GetAdminStats(user?.token);
+      setStats(data);
+    } catch (error) {
+      console.error("Error loading stats:", error);
+      // fallback mock data
       setStats({
         totalUsers: 150,
         totalSubjects: 25,
         totalAssignments: 45,
         activeCohorts: 8,
       });
-    } catch (error) {
-      console.error('Error loading stats:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const StatCard = ({ title, value, icon, color }: any) => (
-    <View className="bg-[#1e293b] rounded-xl p-4 mb-4 border border-white/10">
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: () => {
+          dispatch(clearUser());
+          router.replace("/");
+        },
+      },
+    ]);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadStats();
+    setRefreshing(false);
+  };
+
+  // --- Reusable Components ---
+  const StatCard = ({ title, value, icon, color, trend }: any) => (
+    <View className="bg-[#1e293b]/60 rounded-xl p-5 mb-4 border border-white/10">
       <View className="flex-row items-center justify-between">
-        <View>
-          <Text className="text-gray-400 text-sm">{title}</Text>
-          <Text className="text-white text-2xl font-bold mt-1">{value}</Text>
+        <View className="flex-1">
+          <Text className="text-gray-400 text-sm font-medium mb-1">{title}</Text>
+          <Text className="text-white text-3xl font-bold mb-1">{value}</Text>
+          {trend && (
+            <View className="flex-row items-center">
+              <TrendingUp size={12} color="#10B981" />
+              <Text className="text-green-400 text-xs ml-1">{trend}</Text>
+            </View>
+          )}
         </View>
-        <View className="w-12 h-12 rounded-full items-center justify-center" style={{ backgroundColor: color + '20' }}>
+        <View
+          className="w-14 h-14 rounded-xl items-center justify-center"
+          style={{ backgroundColor: color + "22" }}
+        >
           {icon}
         </View>
       </View>
     </View>
   );
 
-  const ActionButton = ({ title, description, icon, onPress, color = '#3B82F6' }: any) => (
+  const ActionButton = ({
+    title,
+    description,
+    icon,
+    onPress,
+    color = "#3B82F6",
+    badge,
+  }: any) => (
     <TouchableOpacity
-      className="bg-[#1e293b] rounded-xl p-4 mb-3 border border-white/10"
+      className="bg-[#1e293b]/60 rounded-xl p-5 mb-4 border border-white/10"
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       <View className="flex-row items-center">
-        <View className="w-10 h-10 rounded-full items-center justify-center mr-4" style={{ backgroundColor: color + '20' }}>
+        <View
+          className="w-12 h-12 rounded-xl items-center justify-center mr-4"
+          style={{ backgroundColor: color + "22" }}
+        >
           {icon}
         </View>
         <View className="flex-1">
-          <Text className="text-white text-lg font-semibold">{title}</Text>
+          <View className="flex-row items-center">
+            <Text className="text-white text-lg font-semibold">{title}</Text>
+            {badge && (
+              <View className="ml-2 bg-blue-500 rounded-full px-2 py-[1px]">
+                <Text className="text-white text-xs font-semibold">{badge}</Text>
+              </View>
+            )}
+          </View>
           <Text className="text-gray-400 text-sm mt-1">{description}</Text>
         </View>
-        <Settings size={20} color="#6B7280" />
+        <Settings size={16} color="#60A5FA" />
       </View>
     </TouchableOpacity>
   );
@@ -95,29 +158,68 @@ const AdminDashboard = () => {
     return (
       <SafeAreaView className="flex-1 bg-[#0f172b] items-center justify-center">
         <ActivityIndicator size="large" color="#3B82F6" />
-        <Text className="text-gray-400 mt-4">Loading dashboard...</Text>
+        <Text className="text-gray-400 mt-4">Loading admin dashboard...</Text>
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView className="flex-1 bg-[#0f172b]">
-      <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View className="py-6">
-          <Text className="text-3xl font-bold text-white">Admin Dashboard</Text>
-          <Text className="text-gray-400 mt-2">Manage assignments, subjects, and users</Text>
+      {/* Header */}
+      <View className="px-5 py-4 border-b border-white/10 bg-[#1e293b]/80">
+        <View className="flex-row items-center justify-between">
+          <View>
+            <View className="flex-row items-center mb-1">
+              <Shield size={26} color="#3B82F6" />
+              <Text className="text-2xl font-bold text-white ml-3">
+                Admin Panel
+              </Text>
+            </View>
+            <Text className="text-gray-400 text-sm">
+              Welcome back, {user?.name}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleLogout}
+            className="p-3 bg-red-500/20 rounded-lg border border-red-500/30"
+          >
+            <LogOut size={20} color="#EF4444" />
+          </TouchableOpacity>
         </View>
+      </View>
 
-        {/* Stats Grid */}
-        <View className="mb-6">
-          <Text className="text-xl font-semibold text-white mb-4">Overview</Text>
+      {/* Content */}
+      <ScrollView
+        className="flex-1 px-5"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#3B82F6"]}
+            tintColor="#3B82F6"
+          />
+        }
+      >
+        {/* Overview */}
+        <View className="py-6">
+          <View className="flex-row items-center justify-between mb-5">
+            <Text className="text-2xl font-bold text-white">
+              Dashboard Overview
+            </Text>
+            <View className="flex-row items-center">
+              <Clock size={16} color="#60A5FA" />
+              <Text className="text-gray-400 text-sm ml-2">Updated just now</Text>
+            </View>
+          </View>
+
+          {/* ✅ 2x2 GRID of Stat Cards */}
           <View className="flex-row flex-wrap justify-between">
             <View className="w-[48%]">
               <StatCard
                 title="Total Users"
                 value={stats.totalUsers}
-                icon={<Users size={24} color="#3B82F6" />}
+                icon={<Users size={26} color="#3B82F6" />}
                 color="#3B82F6"
               />
             </View>
@@ -125,7 +227,7 @@ const AdminDashboard = () => {
               <StatCard
                 title="Subjects"
                 value={stats.totalSubjects}
-                icon={<BookOpen size={24} color="#10B981" />}
+                icon={<BookOpen size={26} color="#10B981" />}
                 color="#10B981"
               />
             </View>
@@ -133,15 +235,16 @@ const AdminDashboard = () => {
               <StatCard
                 title="Assignments"
                 value={stats.totalAssignments}
-                icon={<Calendar size={24} color="#F59E0B" />}
+                icon={<Calendar size={26} color="#F59E0B" />}
                 color="#F59E0B"
+            
               />
             </View>
             <View className="w-[48%]">
               <StatCard
                 title="Active Cohorts"
                 value={stats.activeCohorts}
-                icon={<BarChart3 size={24} color="#EF4444" />}
+                icon={<BarChart3 size={26} color="#EF4444" />}
                 color="#EF4444"
               />
             </View>
@@ -149,44 +252,49 @@ const AdminDashboard = () => {
         </View>
 
         {/* Quick Actions */}
-        <View className="mb-6">
-          <Text className="text-xl font-semibold text-white mb-4">Quick Actions</Text>
-          
+        <View className="mb-8">
+          <View className="flex-row items-center justify-between mb-5">
+            <Text className="text-2xl font-bold text-white">Quick Actions</Text>
+            <View className="flex-row items-center">
+              <CheckCircle size={16} color="#10B981" />
+              <Text className="text-green-400 text-sm ml-2">
+                All systems operational
+              </Text>
+            </View>
+          </View>
+
           <ActionButton
-            title="Create Assignment"
+            title="Manage Assignment"
             description="Add new assignment with deadline"
-            icon={<Plus size={20} color="#3B82F6" />}
-            onPress={() => router.push('/admin/assignments')}
+            icon={<Plus size={22} color="#3B82F6" />}
+            onPress={() => router.push("/admin/assignments")}
             color="#3B82F6"
           />
-          
           <ActionButton
             title="Manage Subjects"
             description="Add, edit, or remove subjects"
-            icon={<BookOpen size={20} color="#10B981" />}
-            onPress={() => router.push('/admin/subjects')}
+            icon={<BookOpen size={22} color="#10B981" />}
+            onPress={() => router.push("/admin/subjects")}
             color="#10B981"
           />
-          
           <ActionButton
             title="User Management"
-            description="View and manage user accounts"
-            icon={<Users size={20} color="#F59E0B" />}
-            onPress={() => router.push('/admin/users')}
+            description="View and manage users and roles"
+            icon={<Users size={22} color="#F59E0B" />}
+            onPress={() => router.push("/admin/users")}
             color="#F59E0B"
           />
-        </View>
-
-        {/* Recent Activity */}
-        <View className="mb-8">
-          <Text className="text-xl font-semibold text-white mb-4">Recent Activity</Text>
-          <View className="bg-[#1e293b] rounded-xl p-4 border border-white/10">
-            <Text className="text-gray-400 text-sm">No recent activity</Text>
-          </View>
+          <ActionButton
+            title="Analytics & Reports"
+            description="View analytics and generate reports"
+            icon={<BarChart3 size={22} color="#8B5CF6" />}
+            onPress={() => router.push("/admin/analytics")}
+            color="#8B5CF6"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default AdminDashboard;
+export default AdminApp;

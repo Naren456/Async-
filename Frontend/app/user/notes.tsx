@@ -11,8 +11,9 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { GetUserSubjectsWithNotes } from '@/api/apiCall';
-import { BookOpen, Filter } from 'lucide-react-native';
+import { BookOpen } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 type Note = { id: string; title: string; pdfUrl: string };
 type SubjectWithNotes = {
   code: string;
@@ -22,7 +23,7 @@ type SubjectWithNotes = {
   notes: Note[];
 };
 
-const Notes = () => {
+const UserNotes = () => {
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
   const [subjects, setSubjects] = useState<SubjectWithNotes[]>([]);
@@ -55,7 +56,6 @@ const Notes = () => {
             : {}
         );
         setSubjects(data.subjects || []);
-        // console.log(data.subjects)
       } catch (e: any) {
         setError(e?.message || 'Failed to load notes');
       } finally {
@@ -86,18 +86,18 @@ const Notes = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-[#0f172b]">
+      <SafeAreaView className="flex-1 bg-[#0f172b] items-center justify-center">
         <ActivityIndicator size="large" color="#3B82F6" />
         <Text className="text-gray-400 mt-3">Loading notes...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-[#0f172b] p-4">
+      <SafeAreaView className="flex-1 bg-[#0f172b] items-center justify-center p-4">
         <Text className="text-red-400 text-center">{error}</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -244,4 +244,4 @@ const Notes = () => {
   );
 };
 
-export default Notes;
+export default UserNotes;

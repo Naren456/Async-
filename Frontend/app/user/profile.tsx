@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Text, 
   View, 
   ScrollView, 
   TouchableOpacity, 
   Alert, 
-  Image,
-  Switch,
   ActivityIndicator,
   Modal,
   TextInput
@@ -29,8 +27,7 @@ import {
   Edit3
 } from 'lucide-react-native';
 
-
-const Profile = () => {
+const UserProfile = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user);
@@ -42,15 +39,19 @@ const Profile = () => {
   const [editName, setEditName] = useState( '');
   const [editEmail, setEditEmail] = useState( '');
 
+  useEffect(() => {
+    if (user) {
+      setEditName(user.name || '');
+      setEditEmail(user.email || '');
+    }
+  }, [user]);
+
   const handleLogout = () => {
     Alert.alert(
       "Logout",
       "Are you sure you want to logout?",
       [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
+        { text: "Cancel", style: "cancel" },
         {
           text: "Logout",
           style: "destructive",
@@ -58,7 +59,6 @@ const Profile = () => {
             setIsLoading(true);
             try {
               dispatch(clearUser());
-              // Navigate to login screen
               router.replace('/');
             } catch (error) {
               console.error('Logout error:', error);
@@ -84,71 +84,47 @@ const Profile = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const result = await UpdateProfile(user?.token, {
+      const updatedData = {
         name: editName.trim(),
         email: editEmail.trim(),
-      });
-      if (result?.user) {
-        dispatch(setUser({ user: result.user, token: user?.token }));
-      } else {
-        dispatch(updateUser({ name: editName.trim(), email: editEmail.trim() }));
-      }
+      };
+      const response = await UpdateProfile(user.token, updatedData);
+      dispatch(setUser(response.user));
       setEditModalVisible(false);
       Alert.alert("Success", "Profile updated successfully");
     } catch (e: any) {
-      const msg = e?.message || 'Failed to update profile';
-      Alert.alert('Error', msg);
+      console.error("Error updating profile:", e);
+      Alert.alert("Error", e.message || "Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const ProfileSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  const ProfileSection = ({ title, children }: any) => (
     <View className="mb-6">
-      <Text className="text-gray-400 text-sm font-medium mb-3 px-1">{title}</Text>
-      <View className="bg-[#1e293b]/60 rounded-xl border border-white/10">
-        {children}
-      </View>
+      <Text className="text-gray-400 text-sm font-medium mb-3 uppercase tracking-wider">
+        {title}
+      </Text>
+      {children}
     </View>
   );
 
-  const ProfileItem = ({ 
-    icon, 
-    title, 
-    subtitle, 
-    onPress, 
-    rightElement,
-    showChevron = true 
-  }: {
-    icon: React.ReactNode;
-    title: string;
-    subtitle?: string;
-    onPress?: () => void;
-    rightElement?: React.ReactNode;
-    showChevron?: boolean;
-  }) => (
+  const ProfileItem = ({ icon, label, value, onPress }: any) => (
     <TouchableOpacity
+      className="flex-row items-center py-4 border-b border-white/5"
       onPress={onPress}
-      disabled={!onPress}
-      className={`flex-row items-center py-4 px-4 ${
-        onPress ? 'active:bg-white/5' : ''
-      }`}
-      activeOpacity={onPress ? 0.7 : 1}
+      activeOpacity={0.7}
     >
-      <View className="w-10 h-10 rounded-full bg-blue-600/20 items-center justify-center mr-4">
+      <View className="w-8 h-8 rounded-full bg-blue-600/20 items-center justify-center mr-4">
         {icon}
       </View>
       <View className="flex-1">
-        <Text className="text-white text-base font-medium">{title}</Text>
-        {subtitle && (
-          <Text className="text-gray-400 text-sm mt-1">{subtitle}</Text>
-        )}
+        <Text className="text-gray-400 text-sm">{label}</Text>
+        <Text className="text-white text-base mt-1">{value}</Text>
       </View>
-      {rightElement || (showChevron && onPress && (
-        <ChevronRight size={20} color="#6B7280" />
-      ))}
+      {onPress && <ChevronRight size={20} color="#6B7280" />}
     </TouchableOpacity>
   );
 
@@ -157,8 +133,8 @@ const Profile = () => {
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="py-6">
-          <Text className="text-2xl font-bold text-white">Profile</Text>
-          <Text className="text-gray-400 mt-1">Manage your account settings</Text>
+          <Text className="text-3xl font-bold text-white">Profile</Text>
+          <Text className="text-gray-400 mt-2">Manage your account settings</Text>
         </View>
 
         {/* User Info Section */}
@@ -170,13 +146,13 @@ const Profile = () => {
               </View>
               <View className="flex-1">
                 <Text className="text-white text-xl font-semibold">
-                  { user?.name || 'User'}
+                  {user?.name || 'Guest User'}
                 </Text>
                 <Text className="text-gray-400 text-sm mt-1">
-                  { user?.email || 'user@example.com'}
+                  {user?.email || 'N/A'}
                 </Text>
               </View>
-              <TouchableOpacity 
+              <TouchableOpacity
                 className="p-2 rounded-full bg-blue-600/20"
                 onPress={handleEditProfile}
                 activeOpacity={0.7}
@@ -184,12 +160,12 @@ const Profile = () => {
                 <Edit3 size={20} color="#3B82F6" />
               </TouchableOpacity>
             </View>
-            
+
             <View className="flex-row justify-between items-center py-3 border-t border-white/10">
               <View className="flex-row items-center">
                 <Calendar size={16} color="#6B7280" />
                 <Text className="text-gray-400 text-sm ml-2">
-                  Cohort { user?.cohortNo ?? '-'}
+                  Cohort {user?.cohortNo || 'N/A'}
                 </Text>
               </View>
               <View className="bg-green-600/20 px-3 py-1 rounded-full">
@@ -201,80 +177,42 @@ const Profile = () => {
 
         {/* Settings Section */}
         <ProfileSection title="SETTINGS">
-          <ProfileItem
-            icon={<Bell size={20} color="#3B82F6" />}
-            title="Notifications"
-            subtitle="Assignment reminders and updates"
-            rightElement={
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={setNotificationsEnabled}
-                trackColor={{ false: '#374151', true: '#3B82F6' }}
-                thumbColor={notificationsEnabled ? '#ffffff' : '#9CA3AF'}
-              />
-            }
-            showChevron={false}
-          />
-          
-          <View className="h-px bg-white/10 mx-4" />
-          
-          <ProfileItem
-            icon={<Settings size={20} color="#3B82F6" />}
-            title="Appearance"
-            subtitle="Dark mode and theme settings"
-            rightElement={
-              <Switch
-                value={darkModeEnabled}
-                onValueChange={setDarkModeEnabled}
-                trackColor={{ false: '#374151', true: '#3B82F6' }}
-                thumbColor={darkModeEnabled ? '#ffffff' : '#9CA3AF'}
-              />
-            }
-            showChevron={false}
-          />
+          <View className="bg-[#1e293b] rounded-xl">
+            <ProfileItem
+              icon={<Bell size={16} color="#3B82F6" />}
+              label="Notifications"
+              value={notificationsEnabled ? "Enabled" : "Disabled"}
+              onPress={() => setNotificationsEnabled(!notificationsEnabled)}
+            />
+            <ProfileItem
+              icon={<Settings size={16} color="#3B82F6" />}
+              label="Dark Mode"
+              value={darkModeEnabled ? "Enabled" : "Disabled"}
+              onPress={() => setDarkModeEnabled(!darkModeEnabled)}
+            />
+            <ProfileItem
+              icon={<Shield size={16} color="#3B82F6" />}
+              label="Privacy"
+              value="Manage your privacy settings"
+              onPress={() => Alert.alert('Coming Soon', 'Privacy settings will be available soon')}
+            />
+          </View>
         </ProfileSection>
 
-       
-
-        {/* App Info Section */}
-        <ProfileSection title="ABOUT">
-          <ProfileItem
-            icon={<Settings size={20} color="#3B82F6" />}
-            title="App Version"
-            subtitle="1.0.0"
-            showChevron={false}
-          />
-          
-          <View className="h-px bg-white/10 mx-4" />
-          
-       
-        </ProfileSection>
 
         {/* Logout Button */}
-        <View className="mt-6 mb-8">
-          <TouchableOpacity
-            onPress={handleLogout}
-            disabled={isLoading}
-            className={`py-4 px-6 rounded-xl border-2 ${
-              isLoading 
-                ? 'bg-gray-600/20 border-gray-600' 
-                : 'bg-red-600/20 border-red-600 active:bg-red-600/30'
-            }`}
-            activeOpacity={0.7}
-          >
-            {isLoading ? (
-              <View className="flex-row items-center justify-center">
-                <ActivityIndicator size="small" color="#EF4444" />
-                <Text className="text-red-400 ml-2 font-semibold">Logging out...</Text>
-              </View>
-            ) : (
-              <View className="flex-row items-center justify-center">
-                <LogOut size={20} color="#EF4444" />
-                <Text className="text-red-400 ml-2 font-semibold">Logout</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          className="bg-red-600/20 border border-red-600/30 rounded-xl p-4 mb-8"
+          onPress={handleLogout}
+          activeOpacity={0.7}
+        >
+          <View className="flex-row items-center justify-center">
+            <LogOut size={20} color="#EF4444" />
+            <Text className="text-red-400 font-semibold ml-2">
+              {isLoading ? 'Logging out...' : 'Logout'}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Edit Profile Modal */}
@@ -285,18 +223,14 @@ const Profile = () => {
       >
         <SafeAreaView className="flex-1 bg-[#0f172b]">
           <View className="flex-row items-center justify-between p-4 border-b border-white/10">
-            <TouchableOpacity
-              onPress={() => setEditModalVisible(false)}
-              className="p-2"
-            >
+            <TouchableOpacity onPress={() => setEditModalVisible(false)}>
               <Text className="text-blue-400 text-base">Cancel</Text>
             </TouchableOpacity>
             <Text className="text-white text-lg font-semibold">Edit Profile</Text>
-            <TouchableOpacity
-              onPress={handleSaveProfile}
-              className="p-2"
-            >
-              <Text className="text-blue-400 text-base font-semibold">Save</Text>
+            <TouchableOpacity onPress={handleSaveProfile} disabled={isLoading}>
+              <Text className="text-blue-400 text-base font-semibold">
+                {isLoading ? 'Saving...' : 'Save'}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -324,13 +258,6 @@ const Profile = () => {
                 autoCapitalize="none"
               />
             </View>
-
-            <View className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
-              <Text className="text-yellow-400 text-sm">
-                Note: Changes are saved locally. To update your account on the server, 
-                please contact support or re-register with your new information.
-              </Text>
-            </View>
           </ScrollView>
         </SafeAreaView>
       </Modal>
@@ -338,4 +265,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default UserProfile;

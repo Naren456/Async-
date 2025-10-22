@@ -34,28 +34,28 @@ model User {
 }
 
 model Subject {
-  code        String       @id      // primary key
+  code        String       @id
   name        String
-  semester    Int          // subject's semester
-  term        Int          // subject's term
-  assignments Assignment[]
-  notes       Note[]
+  semester    Int
+  term        Int
+  assignments Assignment[] // back-relation, no onDelete here
+  notes       Note[]       // back-relation, no onDelete here
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
 
 model Assignment {
-  id             String           @id @default(cuid())
-  title          String
-  dueDate        DateTime?
-  cohortNo       Int 
-  link           String  
-  cohort         Cohort           @relation(fields: [cohortNo], references: [cohortNo])
-  subjectCode    String
-  subject        Subject          @relation(fields: [subjectCode], references: [code])
-  users          UserAssignment[] // Users assigned this assignment
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id          String    @id @default(cuid())
+  title       String
+  dueDate     DateTime?
+  cohortNo    Int
+  link        String
+  cohort      Cohort    @relation(fields: [cohortNo], references: [cohortNo])
+  subjectCode String
+  subject     Subject   @relation(fields: [subjectCode], references: [code], onDelete: Cascade)
+  users       UserAssignment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@unique([title, cohortNo, subjectCode])
 }
@@ -66,7 +66,7 @@ model Note {
   pdfUrl      String
   subjectCode String
   publicId    String
-  subject     Subject  @relation(fields: [subjectCode], references: [code])
+  subject     Subject  @relation(fields: [subjectCode], references: [code], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

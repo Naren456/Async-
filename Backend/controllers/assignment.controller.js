@@ -4,20 +4,28 @@ import prisma from "../config/db.js";
 
 export const createAssignment = async (req, res) => {
   try {
-    const { title, description, dueDate, cohortNo, subjectId } = req.body;
+    const { title, dueDate, cohortNo, subjectCode, link } = req.body;
+    
+    if (!title || !cohortNo || !subjectCode || !link) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Title, description, cohortNo, subjectCode, and link are required" 
+      });
+    }
+
     const assignment = await prisma.assignment.create({
       data: {
         title,
-        description,
         dueDate: dueDate ? new Date(dueDate) : null,
         cohortNo: Number(cohortNo),
-        subjectId,
+        subjectCode,
+        link,
       },
     });
 
     res.status(201).json({ success: true, assignment });
   } catch (err) {
-    console.error(" Error creating assignment:", err);
+    console.error("❌ Error creating assignment:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };

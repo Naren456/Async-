@@ -133,17 +133,40 @@ export const updateSubject = async (req, res) => {
 };
 
 // ---------------- DELETE SUBJECT ----------------
+
 export const deleteSubject = async (req, res) => {
   try {
-    const { subjectId } = req.params;
+    const { subjectId } = req.params; // ✅ match frontend: /api/subjects/:subjectId
+    
+    if (!subjectId) {
+      return res.status(400).json({ message: "Subject ID is required" });
+    }
 
-    await prisma.subject.delete({
-      where: { id: subjectId },
+    // Check if subject exists first
+    const existing = await prisma.subject.findUnique({
+      where: { code: subjectId }, // assuming 'code' is the unique identifier
     });
 
-    res.json({ message: "Subject deleted successfully" });
+    if (!existing) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+
+    console.log(existing);
+
+    // Delete subject
+ await prisma.assignment.deleteMany({
+  where: { subjectCode: subjectId }, // replace with your subject code
+});
+  await prisma.subject.delete({
+    where : {code : subjectId}
+  });
+    return res.json({ success: true, message: `Subject '${subjectId}' deleted successfully` });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error deleting subject" });
+    console.error("❌ Error deleting subject:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting subject",
+    });
   }
 };

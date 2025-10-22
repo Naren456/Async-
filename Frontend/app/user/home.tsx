@@ -23,7 +23,7 @@ export type Assignment = {
 
 type GroupedAssignments = Record<string, Assignment[]>;
 
-const home = () => {
+const UserHome = () => {
   const cohortNo = useSelector((state: any) => state.user?.cohortNo);
   const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
   const [loading, setLoading] = useState(true);
@@ -50,81 +50,82 @@ const home = () => {
           id: a.id,
           title: a.title,
           subject: a.subject?.name || a.subject?.code || "Subject",
+          link: a.link || "",
           isoDate: iso,
           displayDate: display,
-          link: a.link || "",
         } as Assignment;
       });
     });
     return result;
   };
 
-  // --- Load assignments (API only) ---
-  const loadAssignments = async () => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    const loadAssignments = async () => {
+      if (!cohortNo) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await GetAssignmentsByCohort(cohortNo);
+        setGroupedAssignments(transformGrouped(data.grouped));
+      } catch (err) {
+        console.error("Error loading assignments:", err);
+        setError("Failed to load assignments. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    if (cohortNo != null) {
+      loadAssignments();
+    }
+  }, [cohortNo]);
+
+  const onRefresh = useCallback(async () => {
+    if (!cohortNo) return;
+    setRefreshing(true);
+    setError(null);
     try {
       const data = await GetAssignmentsByCohort(cohortNo);
-      const grouped = transformGrouped(data.grouped);
-      setGroupedAssignments(grouped);
+      setGroupedAssignments(transformGrouped(data.grouped));
     } catch (err) {
-      console.error("❌ Error loading assignments:", err);
-      setError("Failed to load assignments. Pull down to refresh.");
+      console.error("Error refreshing assignments:", err);
+      setError("Failed to refresh assignments. Please try again.");
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
-  };
-
-  // --- On mount ---
-  useEffect(() => {
-    if (!cohortNo) return;
-    loadAssignments();
   }, [cohortNo]);
 
-  // --- Pull to refresh ---
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await loadAssignments();
-    setRefreshing(false);
-  }, [cohortNo]);
-
-  // --- UI Rendering ---
   return (
     <SafeAreaView className="flex-1 bg-[#0f172b] px-2">
+      {/* Header */}
       <View className="px-2 py-3 flex-row justify-between items-center">
         <Text className="text-xl font-bold text-gray-100 tracking-wide">
           Upcoming Deadlines
         </Text>
       </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+      
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
         className="px-4"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#3B82F6"]}
+            colors={['#3B82F6']}
             tintColor="#3B82F6"
           />
         }
       >
+        {/* Loading State */}
         {loading ? (
           <View className="flex-1 justify-center items-center py-20">
             <ActivityIndicator size="large" color="#3B82F6" />
-            <Text className="text-gray-400 mt-4 text-base">
-              Loading assignments...
-            </Text>
+            <Text className="text-gray-400 mt-4 text-base">Loading assignments...</Text>
           </View>
         ) : error ? (
           <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-red-400 text-base text-center mb-4">
-              {error}
-            </Text>
-            <Text className="text-gray-400 text-sm text-center">
-              Pull down to refresh
-            </Text>
+            <Text className="text-red-400 text-base text-center mb-4">{error}</Text>
+            <Text className="text-gray-400 text-sm text-center">Pull down to refresh</Text>
           </View>
         ) : Object.keys(groupedAssignments).length === 0 ? (
           <Text className="text-gray-400 px-5 text-base">
@@ -137,22 +138,15 @@ const home = () => {
               className="mb-6 rounded-xl bg-[#1e293b]/60 border border-white/10 p-4"
             >
               <Text className="text-lg font-semibold text-blue-300 mb-3">
-                {(() => {
-                  const d = new Date(date);
-                  const day = d.getDate().toString().padStart(2, "0");
-                  const month = d.toLocaleString("en-GB", { month: "short" });
-                  const year = d.getFullYear();
-                  return `${day}-${month}-${year}`;
-                })()}
+                {date}
               </Text>
-
-              {assignments.map((assignment) => (
+              {assignments.map((assign: Assignment) => (
                 <AssignmentCard
-                  key={assignment.id}
-                  title={assignment.title}
-                  subject={assignment.subject}
-                  dueDate={assignment.displayDate}
-                  link={assignment.link}
+                  key={assign.id}
+                  title={assign.title}
+                  subject={assign.subject}
+                  dueDate={assign.displayDate}
+                  link={assign.link}
                 />
               ))}
             </View>
@@ -163,4 +157,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default UserHome;

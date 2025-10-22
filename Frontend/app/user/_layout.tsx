@@ -1,23 +1,22 @@
-import { StyleSheet } from "react-native";
-import React from "react";
 import { Tabs } from "expo-router";
-import { Ionicons , Feather , MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-const TabLayout = () => {
+const UserAppLayout = () => {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#3B82F6", // Bright Blue
-        tabBarInactiveTintColor: "#94A3B8", // Slate gray
+        tabBarActiveTintColor: "#3B82F6",
+        tabBarInactiveTintColor: "#94A3B8",
         tabBarStyle: {
-          backgroundColor: "#0f172a", // Navy background
+          backgroundColor: "#0f172a",
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           position: "absolute",
           overflow: "hidden",
           height: 70,
-           borderTopWidth: 0,
+          borderTopWidth: 0,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -35,16 +34,15 @@ const TabLayout = () => {
           ),
         }}
       />
-        <Tabs.Screen
+      <Tabs.Screen
         name="notes"
         options={{
           title: "Notes",
           tabBarIcon: ({ color }) => (
-          <MaterialCommunityIcons name="book-open-page-variant" size={24} color={color} />
+            <MaterialCommunityIcons name="book-open-page-variant" size={24} color={color} />
           ),
         }}
       />
-      
       <Tabs.Screen
         name="profile"
         options={{
@@ -54,19 +52,8 @@ const TabLayout = () => {
           ),
         }}
       />
-      <Tabs.Screen
-        name="admin"
-        options={{
-          title: "Admin",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="settings" size={28} color={color} />
-          ),
-        }}
-      />
     </Tabs>
   );
 };
 
-export default TabLayout;
-
-const styles = StyleSheet.create({});
+export default UserAppLayout;
