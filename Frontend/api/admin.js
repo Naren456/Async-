@@ -83,4 +83,33 @@ export const GetAllUsers = async (token) => {
 
 
 
+// Frontend/api/apiCall.js
+// ... other functions ...
 
+export const UploadNote = async (token, formData) => {
+  try {
+    const response = await api.post('/api/notes/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Important for file uploads
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; // { note }
+  } catch (error) {
+    console.error('UploadNote Error:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Failed to upload note' };
+  }
+};
+
+ // Add DeleteNote API call
+ export const DeleteNote = async (token, noteId) => {
+    try {
+        const response = await api.delete(`/api/notes/${noteId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data; // { message }
+    } catch (error) {
+        console.error('DeleteNote Error:', error.response?.data || error.message);
+        throw error.response?.data || { message: 'Failed to delete note' };
+    }
+};

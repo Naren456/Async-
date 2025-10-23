@@ -7,27 +7,28 @@ import {
   updateSubject,
   deleteSubject,
 } from "../controllers/subject.controller.js";
+import { authenticate, requireAdmin } from "../middleware/auth.js";
 
 const subjectRouter = express.Router();
 
 // ---------------- Public Routes ----------------
 // Get all subjects
-subjectRouter.get("/", getAllSubjects);
+subjectRouter.get("/",authenticate ,getAllSubjects);
 
 // Get subjects for a specific user (based on semester & term)
-subjectRouter.get("/user/:userId", getUserSubjects);
+subjectRouter.get("/user/:userId", authenticate,getUserSubjects);
 
 // Get single subject by ID
-subjectRouter.get("/:subjectId", getSubjectById);
+subjectRouter.get("/:subjectId",authenticate ,getSubjectById);
 
 // ---------------- Admin Routes ----------------
 // Create a new subject
-subjectRouter.post("/", createSubject);
+subjectRouter.post("/",requireAdmin, createSubject);
 
 // Update a subject
-subjectRouter.put("/:subjectId", updateSubject);
+subjectRouter.put("/:subjectId",requireAdmin, updateSubject);
 
 // Delete a subject
-subjectRouter.delete("/:subjectId", deleteSubject);
+subjectRouter.delete("/:subjectId", requireAdmin,deleteSubject);
 
 export default subjectRouter;

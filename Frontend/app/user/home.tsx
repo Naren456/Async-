@@ -1,160 +1,155 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
   ScrollView,
+  TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import AssignmentCard from "../../components/AssignmentCard";
-import { GetAssignmentsByCohort } from "../../api/apiCall";
+import {
+  BookOpen,
+  Calendar,
+  ClipboardList,
+  CheckCircle,
+  Clock,
+  Plus,
+} from "lucide-react-native";
+import { useRouter } from "expo-router";
 
-// --- Local Types ---
-export type Assignment = {
-  id: string;
-  title: string;
-  subject: string;
-  isoDate: string;
-  displayDate: string;
-  link: string;
-};
+const UserDashboard = () => {
+  const router = useRouter();
+  const user = useSelector((state: any) => state.user);
 
-type GroupedAssignments = Record<string, Assignment[]>;
-
-const UserHome = () => {
-  const cohortNo = useSelector((state: any) => state.user?.cohortNo);
-  const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // --- Transform API response to local type ---
-  const transformGrouped = (grouped: any): GroupedAssignments => {
-    const result: GroupedAssignments = {};
-    Object.entries(grouped || {}).forEach(([date, items]: any) => {
-      result[date] = (items as any[]).map((a: any) => {
-        const iso = a.dueDate ? new Date(a.dueDate).toISOString() : "";
-        const display = a.dueDate
-          ? new Date(a.dueDate).toLocaleString(undefined, {
-              year: "numeric",
-              month: "short",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "No due date";
-
-        return {
-          id: a.id,
-          title: a.title,
-          subject: a.subject?.name || a.subject?.code || "Subject",
-          link: a.link || "",
-          isoDate: iso,
-          displayDate: display,
-        } as Assignment;
-      });
-    });
-    return result;
-  };
+  const [stats, setStats] = useState({
+    totalSubjects: 0,
+    totalAssignments: 0,
+    upcomingDeadlines: 0,
+  });
 
   useEffect(() => {
-    const loadAssignments = async () => {
-      if (!cohortNo) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await GetAssignmentsByCohort(cohortNo);
-        setGroupedAssignments(transformGrouped(data.grouped));
-      } catch (err) {
-        console.error("Error loading assignments:", err);
-        setError("Failed to load assignments. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    loadStats();
+  }, []);
 
-    if (cohortNo != null) {
-      loadAssignments();
-    }
-  }, [cohortNo]);
-
-  const onRefresh = useCallback(async () => {
-    if (!cohortNo) return;
-    setRefreshing(true);
-    setError(null);
+  const loadStats = async () => {
+    setLoading(true);
     try {
-      const data = await GetAssignmentsByCohort(cohortNo);
-      setGroupedAssignments(transformGrouped(data.grouped));
-    } catch (err) {
-      console.error("Error refreshing assignments:", err);
-      setError("Failed to refresh assignments. Please try again.");
+      // replace with real API call
+      setStats({
+        totalSubjects: 5,
+        totalAssignments: 12,
+        upcomingDeadlines: 3,
+      });
+    } catch (e) {
+      console.error("Error loading stats:", e);
     } finally {
-      setRefreshing(false);
+      setLoading(false);
     }
-  }, [cohortNo]);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadStats();
+    setRefreshing(false);
+  };
+
+  const StatCard = ({ title, value, icon, color }: any) => (
+    <View className="bg-[#1e293b]/60 rounded-xl p-4 mb-4 w-full border border-white/10">
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className="text-gray-400 text-sm mb-1">{title}</Text>
+          <Text className="text-white text-2xl font-bold">{value}</Text>
+        </View>
+        <View className={`w-12 h-12 rounded-xl items-center justify-center`} style={{ backgroundColor: color + "22" }}>
+          {icon}
+        </View>
+      </View>
+    </View>
+  );
+
+  const ActionButton = ({ title, description, icon, onPress, color = "#3B82F6" }: any) => (
+    <TouchableOpacity
+      className="bg-[#1e293b]/60 rounded-xl p-4 mb-4 border border-white/10 flex-row items-center"
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <View className="w-12 h-12 rounded-xl items-center justify-center mr-4" style={{ backgroundColor: color + "22" }}>
+        {icon}
+      </View>
+      <View className="flex-1">
+        <Text className="text-white text-lg font-semibold">{title}</Text>
+        <Text className="text-gray-400 text-sm mt-1">{description}</Text>
+      </View>
+      <Plus size={16} color={color} />
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#0f172b] items-center justify-center">
+        <ActivityIndicator size="large" color="#3B82F6" />
+        <Text className="text-gray-400 mt-4">Loading dashboard...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0f172b] px-2">
+    <SafeAreaView className="flex-1 bg-[#0f172b]">
       {/* Header */}
-      <View className="px-2 py-3 flex-row justify-between items-center">
-        <Text className="text-xl font-bold text-gray-100 tracking-wide">
-          Upcoming Deadlines
-        </Text>
+      <View className="px-5 py-4 border-b border-white/10 bg-[#1e293b]/80">
+        <Text className="text-2xl font-bold text-white">Hello, {user?.name}</Text>
+        <View className="flex-row items-center mt-1">
+          <Clock size={14} color="#60A5FA" />
+          <Text className="text-gray-400 text-sm ml-2">Welcome back!</Text>
+        </View>
       </View>
-      
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
-        className="px-4"
+
+      <ScrollView
+        className="flex-1 px-5"
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={['#3B82F6']}
-            tintColor="#3B82F6"
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#3B82F6"]} tintColor="#3B82F6" />
         }
+        showsVerticalScrollIndicator={false}
       >
-        {/* Loading State */}
-        {loading ? (
-          <View className="flex-1 justify-center items-center py-20">
-            <ActivityIndicator size="large" color="#3B82F6" />
-            <Text className="text-gray-400 mt-4 text-base">Loading assignments...</Text>
-          </View>
-        ) : error ? (
-          <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-red-400 text-base text-center mb-4">{error}</Text>
-            <Text className="text-gray-400 text-sm text-center">Pull down to refresh</Text>
-          </View>
-        ) : Object.keys(groupedAssignments).length === 0 ? (
-          <Text className="text-gray-400 px-5 text-base">
-            No upcoming assignments
-          </Text>
-        ) : (
-          Object.entries(groupedAssignments).map(([date, assignments]) => (
-            <View
-              key={date}
-              className="mb-6 rounded-xl bg-[#1e293b]/60 border border-white/10 p-4"
-            >
-              <Text className="text-lg font-semibold text-blue-300 mb-3">
-                {date}
-              </Text>
-              {assignments.map((assign: Assignment) => (
-                <AssignmentCard
-                  key={assign.id}
-                  title={assign.title}
-                  subject={assign.subject}
-                  dueDate={assign.displayDate}
-                  link={assign.link}
-                />
-              ))}
+        {/* Stats */}
+        <View className="py-6">
+          <Text className="text-2xl font-bold text-white mb-4">Your Stats</Text>
+          <View className="flex-row flex-wrap justify-between">
+            <View className="w-[48%]">
+              <StatCard
+                title="Subjects"
+                value={stats.totalSubjects}
+                icon={<BookOpen size={26} color="#10B981" />}
+                color="#10B981"
+              />
             </View>
-          ))
-        )}
+            <View className="w-[48%]">
+              <StatCard
+                title="Assignments"
+                value={stats.totalAssignments}
+                icon={<ClipboardList size={26} color="#F59E0B" />}
+                color="#F59E0B"
+              />
+            </View>
+            <View className="w-[48%]">
+              <StatCard
+                title="Upcoming Deadlines"
+                value={stats.upcomingDeadlines}
+                icon={<Calendar size={26} color="#3B82F6" />}
+                color="#3B82F6"
+              />
+            </View>
+          </View>
+        </View>
+
+       
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default UserHome;
+export default UserDashboard;

@@ -7,6 +7,7 @@ import CourseraRouter from './routes/coursera.route.js';
 import subjectRouter from './routes/subject.route.js';
 import assignmentRouter from './routes/assignment.route.js';
 import adminRouter from './routes/admin.route.js';
+import notesRouter from './routes/note.route.js';
 // import './jobs/assignmentCleanUp.js'; 
 // import './jobs/syncAssignment.js'
 dotenv.config();
@@ -28,6 +29,7 @@ app.use('/api/coursera',CourseraRouter);
 app.use('/api/subjects', subjectRouter);
 app.use('/api/assignments', assignmentRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/notes', notesRouter);
 
 // test route
 

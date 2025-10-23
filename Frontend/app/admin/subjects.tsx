@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, FileUp } from 'lucide-react-native';
 import { GetSubjects, DeleteSubject } from '@/api/apiCall';
 
 type Subject = {
@@ -42,6 +42,16 @@ const AdminSubjects = () => {
     }
     loadSubjects();
   }, [user?.id, user?.role]);
+
+  const handleAddNote = (subject: Subject) => {
+    router.push({
+      pathname: '/admin/uploadNotes',
+      params: {
+        subjectCode: subject.code,
+        subjectName: subject.name,
+      },
+    });
+  };
 
   const loadSubjects = async () => {
     setLoading(true);
@@ -101,42 +111,42 @@ const AdminSubjects = () => {
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0f172b] px-4">
+    <SafeAreaView className="flex-1 bg-[#0f172b] px-5">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-0 py-4 border-b border-white/10">
+      <View className="flex-row items-center justify-between py-5 border-b border-white/10">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <ArrowLeft size={24} color="#60A5FA" />
         </TouchableOpacity>
         <Text className="text-xl font-bold text-white">Subjects</Text>
-        <View style={{ width: 24 }} />
+        <View style={{ width: 28 }} />
       </View>
 
       {/* Add New */}
       <TouchableOpacity
         onPress={handleAddNew}
-        className="py-3 my-4 bg-blue-600 rounded-xl"
+        className="py-3 my-5 bg-blue-600 rounded-xl shadow-md active:opacity-80"
       >
-        <Text className="text-white text-center font-semibold">Add New Subject</Text>
+        <Text className="text-white text-center font-semibold text-base">+ Add New Subject</Text>
       </TouchableOpacity>
 
       {/* Filters */}
-      <View className="flex-row mb-5">
+      <View className="flex-row mb-5 space-x-3">
         <TouchableOpacity
-          className="flex-1 mr-2 py-3 px-4 rounded-xl bg-[#1e293b] border border-white/10"
+          className="flex-1 py-3 px-4 rounded-xl bg-[#1e293b] border border-white/10"
           onPress={() => setSemModalVisible(true)}
         >
           <Text className="text-gray-400 text-sm">Semester</Text>
-          <Text className="text-white text-base mt-1">
+          <Text className="text-white text-base mt-1 font-medium">
             {selectedSemester ?? 'All'}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-1 ml-2 py-3 px-4 rounded-xl bg-[#1e293b] border border-white/10"
+          className="flex-1 py-3 px-4 rounded-xl bg-[#1e293b] border border-white/10"
           onPress={() => setTermModalVisible(true)}
         >
           <Text className="text-gray-400 text-sm">Term</Text>
-          <Text className="text-white text-base mt-1">
+          <Text className="text-white text-base mt-1 font-medium">
             {selectedTerm ?? 'All'}
           </Text>
         </TouchableOpacity>
@@ -144,35 +154,48 @@ const AdminSubjects = () => {
 
       {/* Subjects List */}
       {loading ? (
-        <ActivityIndicator size="large" color="#3B82F6" />
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#3B82F6" />
+        </View>
       ) : (
         <FlatList
           data={filteredSubjects}
           keyExtractor={(item) => item.code}
+          contentContainerStyle={{ paddingBottom: 80 }}
           renderItem={({ item }) => (
-            <View className="p-4 mb-3 bg-[#1e293b] rounded-2xl border border-white/10">
+            <View className="p-4 mb-4 bg-[#1e293b] rounded-2xl border border-white/10 shadow-sm">
               <Text className="text-white font-semibold text-lg">{item.name}</Text>
               <Text className="text-gray-400 text-xs mt-1">
-                Sem {item.semester} • Term {item.term} • {item.code}
+                Semester {item.semester} • Term {item.term} • Code: {item.code}
               </Text>
-              <View className="flex-row mt-3">
+
+              <View className="flex-row mt-4 space-x-2">
                 <TouchableOpacity
-                  className="mr-3 px-3 py-2 bg-blue-600 rounded-lg"
+                  className="flex-1 bg-blue-600 py-2 rounded-lg active:opacity-80"
                   onPress={() => handleEdit(item)}
                 >
-                  <Text className="text-white">Edit</Text>
+                  <Text className="text-white text-center font-medium">Edit</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
-                  className="px-3 py-2 bg-red-600 rounded-lg"
+                  className="flex-1 bg-red-600 py-2 rounded-lg active:opacity-80"
                   onPress={() => handleDelete(item.code)}
                 >
-                  <Text className="text-white">Delete</Text>
+                  <Text className="text-white text-center font-medium">Delete</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="flex-1 flex-row items-center justify-center bg-green-600 py-2 rounded-lg active:opacity-80"
+                  onPress={() => handleAddNote(item)}
+                >
+                  <FileUp size={16} color="white" />
+                  <Text className="text-white text-center font-medium ml-1">Add Note</Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
           ListEmptyComponent={
-            <Text className="text-gray-400 text-center mt-6">
+            <Text className="text-gray-400 text-center mt-10 text-base">
               No subjects found
             </Text>
           }
@@ -181,16 +204,34 @@ const AdminSubjects = () => {
       )}
 
       {/* Semester Modal */}
-      <Modal visible={semModalVisible} animationType="slide" transparent onRequestClose={() => setSemModalVisible(false)}>
+      <Modal
+        visible={semModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setSemModalVisible(false)}
+      >
         <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-[#0f172b] p-5 rounded-t-3xl border-t border-white/10 max-h-[60%]">
+          <View className="bg-[#1e293b] p-6 rounded-t-3xl border-t border-white/10 max-h-[60%]">
             <Text className="text-white text-lg font-semibold mb-4">Select Semester</Text>
             <ScrollView>
-              <TouchableOpacity className="py-3 border-b border-white/5" onPress={() => { setSelectedSemester(undefined); setSemModalVisible(false); }}>
+              <TouchableOpacity
+                className="py-3 border-b border-white/10"
+                onPress={() => {
+                  setSelectedSemester(undefined);
+                  setSemModalVisible(false);
+                }}
+              >
                 <Text className="text-gray-200">All</Text>
               </TouchableOpacity>
               {Array.from({ length: 8 }, (_, i) => i + 1).map((n) => (
-                <TouchableOpacity key={n} className="py-3 border-b border-white/5" onPress={() => { setSelectedSemester(n); setSemModalVisible(false); }}>
+                <TouchableOpacity
+                  key={n}
+                  className="py-3 border-b border-white/10"
+                  onPress={() => {
+                    setSelectedSemester(n);
+                    setSemModalVisible(false);
+                  }}
+                >
                   <Text className="text-gray-200">Semester {n}</Text>
                 </TouchableOpacity>
               ))}
@@ -200,16 +241,34 @@ const AdminSubjects = () => {
       </Modal>
 
       {/* Term Modal */}
-      <Modal visible={termModalVisible} animationType="slide" transparent onRequestClose={() => setTermModalVisible(false)}>
+      <Modal
+        visible={termModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setTermModalVisible(false)}
+      >
         <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-[#0f172b] p-5 rounded-t-3xl border-t border-white/10 max-h-[40%]">
+          <View className="bg-[#1e293b] p-6 rounded-t-3xl border-t border-white/10 max-h-[40%]">
             <Text className="text-white text-lg font-semibold mb-4">Select Term</Text>
             <ScrollView>
-              <TouchableOpacity className="py-3 border-b border-white/5" onPress={() => { setSelectedTerm(undefined); setTermModalVisible(false); }}>
+              <TouchableOpacity
+                className="py-3 border-b border-white/10"
+                onPress={() => {
+                  setSelectedTerm(undefined);
+                  setTermModalVisible(false);
+                }}
+              >
                 <Text className="text-gray-200">All</Text>
               </TouchableOpacity>
-              {[1,2].map((n) => (
-                <TouchableOpacity key={n} className="py-3 border-b border-white/5" onPress={() => { setSelectedTerm(n); setTermModalVisible(false); }}>
+              {[1, 2].map((n) => (
+                <TouchableOpacity
+                  key={n}
+                  className="py-3 border-b border-white/10"
+                  onPress={() => {
+                    setSelectedTerm(n);
+                    setTermModalVisible(false);
+                  }}
+                >
                   <Text className="text-gray-200">Term {n}</Text>
                 </TouchableOpacity>
               ))}

@@ -1,6 +1,11 @@
-import { Tabs } from "expo-router";
 import React from "react";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import {
+  Home,
+  ClipboardList,
+  BookOpen,
+  User,
+} from "lucide-react-native";
 
 const UserAppLayout = () => {
   return (
@@ -16,12 +21,15 @@ const UserAppLayout = () => {
           position: "absolute",
           overflow: "hidden",
           height: 70,
-          borderTopWidth: 0,
+          borderTopWidth: 1,          // thin line on top
+          borderTopColor: "rgba(255,255,255,0.1)", // subtle divider
+          elevation: 10,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "600",
-          letterSpacing: 0.5,
+          letterSpacing: 0.4,
+          marginBottom: 5,
         },
       }}
     >
@@ -29,27 +37,31 @@ const UserAppLayout = () => {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={28} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Home size={26} color={color} strokeWidth={2.4} />,
         }}
       />
+
+      <Tabs.Screen
+        name="assignment"
+        options={{
+          title: "Assignments",
+          tabBarIcon: ({ color }) => <ClipboardList size={26} color={color} strokeWidth={2.4} />,
+        }}
+      />
+
       <Tabs.Screen
         name="notes"
         options={{
           title: "Notes",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="book-open-page-variant" size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <BookOpen size={26} color={color} strokeWidth={2.4} />,
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-sharp" size={28} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <User size={26} color={color} strokeWidth={2.4} />,
         }}
       />
     </Tabs>

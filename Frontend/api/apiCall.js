@@ -71,7 +71,7 @@ export const GetSubjects = async () =>{
   }
 }
 
-export const GetUserSubjectsWithNotes = async (userId, opts = {}) => {
+export const GetUserSubjectsWithNotes = async (token,userId, opts = {}) => {
   try {
     const params = new URLSearchParams();
     if (opts.semester !== undefined && opts.term !== undefined) {
@@ -80,7 +80,11 @@ export const GetUserSubjectsWithNotes = async (userId, opts = {}) => {
     }
     const qs = params.toString();
     const url = qs ? `/api/subjects/user/${userId}?${qs}` : `/api/subjects/user/${userId}`;
-    const response = await api.get(url);
+    const response = await api.get(url , {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });;
     return response.data; // { subjects: [{ code, name, notes: [...] }...] }
   } catch (error) {
     console.error('GetUserSubjectsWithNotes Error:', error);
@@ -90,7 +94,9 @@ export const GetUserSubjectsWithNotes = async (userId, opts = {}) => {
 
 export const GetSubjectById = async (subjectId) => {
   try {
-    const response = await api.get(`/api/subjects/${subjectId}`);
+    const response = await api.get(`/api/subjects/${subjectId}`,{
+            headers: { Authorization: `Bearer ${token}` },
+        });
     return response.data; // { subject }
   } catch (error) {
     console.error('GetSubjectById Error:', error);
