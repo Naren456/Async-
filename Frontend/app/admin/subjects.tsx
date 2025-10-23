@@ -25,7 +25,12 @@ type Subject = {
 const AdminSubjects = () => {
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
-
+  const [form, setForm] = useState({
+  code: '',
+  name: '',
+  semester: '',
+  term: ''
+});
   const [loading, setLoading] = useState(false);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [semModalVisible, setSemModalVisible] = useState(false);

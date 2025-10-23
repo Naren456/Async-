@@ -20,3 +20,5 @@
 .vscode
 /Backend/.gitignore
 /Frontend/.gitignore
+/Frontend/.expo
+/Frontend/.vscode

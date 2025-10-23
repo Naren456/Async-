@@ -10,7 +10,7 @@ type SubjectFormProps = {
   onCancel?: () => void;
 };
 
-const SubjectForm: React.FC<SubjectFormProps> = ({ form, setForm, onSubmit, loading, editMode, onCancel }) => {
+const SubjectForm: React.FC<SubjectFormProps> = ({ form, setForm, onSubmit, loading, editMode, onCancel}) => {
   const fields = ['code', 'name', 'semester', 'term'];
 
   return (
@@ -19,7 +19,7 @@ const SubjectForm: React.FC<SubjectFormProps> = ({ form, setForm, onSubmit, load
         {editMode ? 'Update Subject' : 'Create Subject'}
       </Text>
       <View className="bg-[#1e293b] rounded-xl p-4 border border-white/10">
-        {fields.map((key) => (
+        {/* {fields.map((key) => (
           <View key={key} className="mb-3">
             <Text className="text-gray-300 mb-1 capitalize">{key}</Text>
             <TextInput
@@ -31,7 +31,7 @@ const SubjectForm: React.FC<SubjectFormProps> = ({ form, setForm, onSubmit, load
               editable={!editMode || key !== 'code'} // code can't be changed in edit
             />
           </View>
-        ))}
+        ))} */}
 
         <TouchableOpacity
           onPress={onSubmit}
