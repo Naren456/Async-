@@ -56,7 +56,7 @@ const AdminSubjects = () => {
   const loadSubjects = async () => {
     setLoading(true);
     try {
-      const data = await GetSubjects();
+      const data = await GetSubjects(user.token);
       setSubjects(data.subjects || []);
     } catch (e) {
       setSubjects([]);

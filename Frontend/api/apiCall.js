@@ -57,9 +57,13 @@ export const GetAssignments = async (cohort) => {
   }
 };
 
-export const GetSubjects = async () =>{
+export const GetSubjects = async (token) =>{
   try{
-    const response = await api.get('/api/subjects');
+    const response = await api.get('/api/subjects', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   }
   catch(error){
