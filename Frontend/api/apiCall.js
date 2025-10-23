@@ -96,11 +96,12 @@ export const GetUserSubjectsWithNotes = async (token,userId, opts = {}) => {
   }
 }
 
-export const GetSubjectById = async (subjectId) => {
+export const GetSubjectById = async (token,subjectId) => {
   try {
     const response = await api.get(`/api/subjects/${subjectId}`,{
             headers: { Authorization: `Bearer ${token}` },
         });
+        
     return response.data; // { subject }
   } catch (error) {
     console.error('GetSubjectById Error:', error);

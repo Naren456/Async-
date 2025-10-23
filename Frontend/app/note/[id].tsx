@@ -11,7 +11,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FileText, ArrowLeft } from "lucide-react-native";
 import { GetSubjectById } from "@/api/apiCall";
-
+import { useSelector } from "react-redux";
 export default function SubjectNotes() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -19,13 +19,14 @@ export default function SubjectNotes() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const user = useSelector((state: any) => state.user);
 
   const loadSubject = async () => {
     if (!id) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await GetSubjectById(id);
+      const data = await GetSubjectById(user?.token,id);
       setSubject(data.subject);
     } catch (e: any) {
       setError(e?.message || "Failed to load subject");

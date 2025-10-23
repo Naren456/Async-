@@ -21,7 +21,20 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.android.async"
+      "package": "com.android.async",
+     "queries": [
+    {
+      "intent": [
+        {
+          "action": "android.intent.action.VIEW",
+          "data": {
+            "scheme": "https"
+          }
+        }
+      ]
+    }
+  ]
+      
     },
     "web": {
       "output": "static",

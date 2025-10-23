@@ -15,11 +15,12 @@ const AssignmentCard: React.FC<AssignmentCardProps> = ({
   subject,
   dueDate,
   link,
-  onPress,
 }) => {
   const openAssignment = async () => {
     try {
-      const supported = await Linking.canOpenURL(link);
+    console.log(`Checking support for URL: ${link}`); // Add log
+    const supported = await Linking.canOpenURL(link);
+    console.log(`URL supported: ${supported}`)
       if (supported) {
         await Linking.openURL(link);
       } else {
