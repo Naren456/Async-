@@ -149,5 +149,10 @@
 4.  Build: `cd android && ./gradlew assembleRelease` (use `gradlew.bat` on Windows).
 5.  Find APK in `Frontend/android/app/build/outputs/apk/release/`.
 
+# Screenshots
+## User Dashboard
+
+
+
 # Demo 
 🎥 [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing)
