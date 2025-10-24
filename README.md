@@ -150,13 +150,33 @@
 5.  Find APK in `Frontend/android/app/build/outputs/apk/release/`.
 
 ## Screenshots 
-![Screenshot_20251024-174924_ASync](https://github.com/user-attachments/assets/e5ff1d0f-cf97-40d4-aa3c-76a73c7728fe)
-![Screenshot_20251024-174929_ASync](https://github.com/user-attachments/assets/504d2e89-b6c6-4cb8-ad75-![Screenshot_20251024-174947_ASync](https://github.com/user-attachments/assets/3a525388-579a-492a-819f-589a50d67ca4)
-![Screenshot_20251024-174955_ASync](https://github.com/user-attachments/assets/35ab4704-c0d4-47a7-81ca-95be4adb8687)
-ae6cb0507b06)
-![Screenshot_20251024-175006_ASync](https://github.com/user-attachments/assets/835832eb-5f5c-4b8c-99d9-831c19932af7)
-![Screenshot_20251024-175012_ASync](https://github.com/user-attachments/assets/01c69e8b-8e11-4bce-b4d0-e1dd26847dc2)
-![Screenshot_20251024-175019_ASync](https://github.com/user-attachments/assets/51c0f12e-b5e2-48c8-9a1f-110380a47b9e)
+
+### Auth Screen
+<p> 
+  <img src="https://github.com/user-attachments/assets/e5ff1d0f-cf97-40d4-aa3c-76a73c7728fe" width="180" />
+  <img src="https://github.com/user-attachments/assets/504d2e89-b6c6-4cb8-ad75-ae6cb0507b06" width="180"/>
+</p>
+
+### User Screen
+<p>
+  <img src="https://github.com/user-attachments/assets/3a525388-579a-492a-819f-589a50d67ca4" width="180"/>
+  <img src="https://github.com/user-attachments/assets/35ab4704-c0d4-47a7-81ca-95be4adb8687" width="180"/>
+  <img src="https://github.com/user-attachments/assets/835832eb-5f5c-4b8c-99d9-831c19932af7" width="180"/>
+  <img src="https://github.com/user-attachments/assets/01c69e8b-8e11-4bce-b4d0-e1dd26847dc2" width="180"/>
+  <img src="https://github.com/user-attachments/assets/51c0f12e-b5e2-48c8-9a1f-110380a47b9e" width="180"/>
+</p>
+
+### Admin Screen
+
+<p >
+  <img src="https://github.com/user-attachments/assets/506dc18d-f487-40f3-84e0-3a714c836359" width="180"/>
+  <img src="https://github.com/user-attachments/assets/d47b169f-0a64-4541-9cb4-72019e718d28" width="180"/>
+  <img src="https://github.com/user-attachments/assets/5dcb5ab0-176a-4b75-b9cb-72a0d4551e62" width="180"/>
+  <img src="https://github.com/user-attachments/assets/3142b334-d8d3-477e-b51a-7f2183ee8c60" width="180"/>
+  <img src="https://github.com/user-attachments/assets/db40e750-0653-4471-8827-abe3ba12604c" width="180"/>
+  <img src="https://github.com/user-attachments/assets/1eecf529-a658-4a97-82fa-4413990b412d" width="180"/>
+</p>
+
 
 
 # Demo 
