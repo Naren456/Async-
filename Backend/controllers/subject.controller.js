@@ -152,6 +152,9 @@ export const deleteSubject = async (req, res) => {
     }
 
     console.log(existing);
+     await prisma.note.deleteMany({
+  where: { subjectCode: subjectId }, // replace with your subject code
+});
 
     // Delete subject
  await prisma.assignment.deleteMany({

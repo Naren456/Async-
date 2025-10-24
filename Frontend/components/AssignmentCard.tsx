@@ -1,13 +1,15 @@
-import { CalendarDays, ChevronRight } from "lucide-react-native";
+import { CalendarDays, ChevronRight, Pen, Trash2 } from "lucide-react-native";
 import React from "react";
 import { Alert, Pressable, Text, View, Linking } from "react-native";
 
 interface AssignmentCardProps {
   title: string;
   subject: string;
-  dueDate: string; // ISO format
+  dueDate: string; // formatted string
   link: string;
-  onPress?: () => void;
+  isAdmin?: boolean; // new prop
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const AssignmentCard: React.FC<AssignmentCardProps> = ({
@@ -15,12 +17,15 @@ const AssignmentCard: React.FC<AssignmentCardProps> = ({
   subject,
   dueDate,
   link,
+  isAdmin = false,
+  onEdit,
+  onDelete,
 }) => {
   const openAssignment = async () => {
     try {
-    console.log(`Checking support for URL: ${link}`); // Add log
-    const supported = await Linking.canOpenURL(link);
-    console.log(`URL supported: ${supported}`)
+      console.log(`Checking support for URL: ${link}`);
+      const supported = await Linking.canOpenURL(link);
+      console.log(`URL supported: ${supported}`);
       if (supported) {
         await Linking.openURL(link);
       } else {
@@ -32,31 +37,43 @@ const AssignmentCard: React.FC<AssignmentCardProps> = ({
     }
   };
 
-  const CardContent = (
-    <View className="rounded-2xl border border-white/10 bg-[#334155]/70 shadow-md p-5 mb-4">
-      {/* Subject badge */}
-      <View className="self-start bg-blue-600/30 px-3 py-1 rounded-full mb-3">
-        <Text className="text-xs font-medium text-blue-300">{subject}</Text>
-      </View>
-
-      {/* Title */}
-      <Text className="text-lg font-semibold mb-3 text-gray-100 leading-6">
-        {title}
-      </Text>
-
-      {/* Due Date + Chevron */}
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <CalendarDays size={16} color="#60A5FA" />
-          <Text className="ml-2 text-sm text-gray-300">Due: {dueDate}</Text>
+  return (
+    <Pressable onPress={openAssignment}>
+      <View className="rounded-2xl border border-white/10 bg-[#334155]/70 shadow-md p-5 mb-4">
+        {/* Subject badge */}
+        <View className="self-start bg-blue-600/30 px-3 py-1 rounded-full mb-3">
+          <Text className="text-xs font-medium text-blue-300">{subject}</Text>
         </View>
 
-        <ChevronRight size={18} color="#60A5FA" />
-      </View>
-    </View>
-  );
+        {/* Title */}
+        <Text className="text-lg font-semibold mb-3 text-gray-100 leading-6">
+          {title}
+        </Text>
 
-  return <Pressable onPress={openAssignment}>{CardContent}</Pressable>;
+        {/* Due Date + Icons */}
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center">
+            <CalendarDays size={16} color="#60A5FA" />
+            <Text className="ml-2 text-sm text-gray-300">Due: {dueDate}</Text>
+          </View>
+
+          <View className="flex-row items-center">
+            {isAdmin && (
+              <>
+                <Pressable onPress={onEdit} className="mr-3">
+                  <Pen size={18} color="#FACC15" />
+                </Pressable>
+                <Pressable onPress={onDelete}>
+                  <Trash2 size={18} color="#EF4444" />
+                </Pressable>
+              </>
+            )}
+            <ChevronRight size={18} color="#60A5FA" className="ml-2" />
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
 };
 
 export default AssignmentCard;

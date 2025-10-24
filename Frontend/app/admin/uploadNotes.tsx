@@ -4,10 +4,8 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Button,
   ActivityIndicator,
   Alert,
-  Platform,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,26 +13,24 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { ArrowLeft, FileUp, XCircle } from 'lucide-react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import { UploadNote } from '../../api/admin'; // Make sure this is correctly imported
+import { UploadNote } from '../../api/admin'; // Make sure this import is correct
 
 const UploadNoteScreen = () => {
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
-  const { subjectCode, subjectName } = useLocalSearchParams<{ subjectCode: string; subjectName: string }>();
+  const { subjectCode, subjectName } = useLocalSearchParams<{
+    subjectCode: string;
+    subjectName: string;
+  }>();
 
   const [selectedFile, setSelectedFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [noteTitle, setNoteTitle] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    // Redirect if required data is missing
     if (!subjectCode || !subjectName || user?.role !== 'TEACHER') {
-      Alert.alert("Error", "Missing subject information or invalid access.");
-      if (router.canGoBack()) {
-        router.back();
-      } else {
-        router.replace('/admin'); // Fallback route
-      }
+      Alert.alert('Error', 'Missing subject info or invalid access.');
+      router.canGoBack() ? router.back() : router.replace('/admin');
     }
   }, [subjectCode, subjectName, user, router]);
 
@@ -47,15 +43,8 @@ const UploadNoteScreen = () => {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
-        console.log('Selected file:', asset.uri, asset.mimeType, asset.name);
         setSelectedFile(asset);
-        // Pre-fill title, remove .pdf extension if present
         setNoteTitle(asset.name.replace(/\.pdf$/i, ''));
-      } else {
-        console.log('Document picking cancelled or failed');
-        // Optionally clear state if needed, though often not necessary on cancel
-        // setSelectedFile(null);
-        // setNoteTitle('');
       }
     } catch (err) {
       console.error('Error picking document:', err);
@@ -67,7 +56,7 @@ const UploadNoteScreen = () => {
 
   const handleUpload = async () => {
     if (!selectedFile || !noteTitle.trim() || !subjectCode) {
-      Alert.alert('Missing Info', 'Please select a PDF file and enter a title.');
+      Alert.alert('Missing Info', 'Please select a PDF and enter a title.');
       return;
     }
 
@@ -85,14 +74,13 @@ const UploadNoteScreen = () => {
     try {
       await UploadNote(user.token, formData);
       Alert.alert('Success', 'Note uploaded successfully!', [
-        { text: "OK", onPress: () => router.back() } // Go back after success
+        { text: 'OK', onPress: () => router.back() },
       ]);
-      // Reset state locally if needed, though navigation handles it
       setSelectedFile(null);
       setNoteTitle('');
     } catch (e: any) {
-      console.error("Upload failed:", e);
-      Alert.alert('Upload Failed', e?.message || 'Could not upload the note.');
+      console.error('Upload failed:', e);
+      Alert.alert('Upload Failed', e?.message || 'Could not upload note.');
     } finally {
       setIsUploading(false);
     }
@@ -110,18 +98,21 @@ const UploadNoteScreen = () => {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <ArrowLeft size={24} color="#60A5FA" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-white text-center flex-1 mx-4" numberOfLines={1} ellipsizeMode="tail">
+
+        <Text className="text-xl font-bold text-white text-center flex-1">
           Upload Note
         </Text>
-        <View style={{ width: 24 }} /> {/* Spacer */}
+
+        <View style={{ width: 24 }} /> {/* Spacer to balance header */}
       </View>
 
       <ScrollView className="flex-1 p-4">
+        {/* Subject info */}
         <Text className="text-lg text-gray-300 mb-4 text-center">
           Subject: <Text className="font-semibold text-white">{subjectName} ({subjectCode})</Text>
         </Text>
 
-        {/* File Picker Button */}
+        {/* File Picker */}
         {!selectedFile && (
           <TouchableOpacity
             onPress={pickDocument}
@@ -133,15 +124,19 @@ const UploadNoteScreen = () => {
           </TouchableOpacity>
         )}
 
-        {/* Selected File Info & Title Input */}
+        {/* Selected File Info & Title */}
         {selectedFile && (
           <View className="mb-6 p-4 bg-[#1e293b] rounded-xl border border-white/10">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-green-400 font-medium flex-1 mr-2" numberOfLines={1} ellipsizeMode="middle">
+              <Text
+                className="text-green-400 font-medium flex-1 mr-2"
+                numberOfLines={1}
+                ellipsizeMode="middle"
+              >
                 File: {selectedFile.name}
               </Text>
               <TouchableOpacity onPress={clearSelection} className="p-1">
-                 <XCircle size={20} color="#EF4444"/>
+                <XCircle size={20} color="#EF4444" />
               </TouchableOpacity>
             </View>
 
@@ -158,12 +153,14 @@ const UploadNoteScreen = () => {
 
         {/* Upload Button */}
         {selectedFile && (
-           <TouchableOpacity
+          <TouchableOpacity
             onPress={handleUpload}
             disabled={isUploading || !noteTitle.trim()}
-            className={`py-4 rounded-xl ${isUploading || !noteTitle.trim() ? "bg-gray-600" : "bg-green-600"} ${!selectedFile ? 'hidden' : ''}`}
+            className={`py-4 rounded-xl ${
+              isUploading || !noteTitle.trim() ? 'bg-gray-600' : 'bg-green-600'
+            }`}
             activeOpacity={0.8}
-           >
+          >
             {isUploading ? (
               <ActivityIndicator color="#fff" />
             ) : (
@@ -171,7 +168,7 @@ const UploadNoteScreen = () => {
                 Upload Note
               </Text>
             )}
-           </TouchableOpacity>
+          </TouchableOpacity>
         )}
       </ScrollView>
     </SafeAreaView>

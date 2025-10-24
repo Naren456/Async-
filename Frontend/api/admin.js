@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL } from "./config";
+import Assignment from "@/app/user/assignment";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -113,3 +114,17 @@ export const UploadNote = async (token, formData) => {
         throw error.response?.data || { message: 'Failed to delete note' };
     }
 };
+
+export const DeleteAssignment =  async (token,AssignmentId) =>{
+  try{
+     const response = await api.delete(`/api/assignments/${AssignmentId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data; // { message }
+  }
+  catch(error){
+    console.error('DeleteAssignment Error:', error.response?.data || error.message);
+        throw error.response?.data || { message: 'Failed to delete note' };
+  }
+
+}

@@ -23,7 +23,7 @@ export type Assignment = {
 
 type GroupedAssignments = Record<string, Assignment[]>;
 
-const UserHome = () => {
+const Assignment = () => {
   const cohortNo = useSelector((state: any) => state.user?.cohortNo);
   const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
   const [loading, setLoading] = useState(true);
@@ -94,13 +94,14 @@ const UserHome = () => {
       setRefreshing(false);
     }
   }, [cohortNo]);
+  
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0f172b] px-2">
+    <SafeAreaView className="flex-1 bg-[#0f172b] px-2 mb-18">
       {/* Header */}
-      <View className="px-2 py-3 flex-row justify-between items-center">
+      <View className="px-2 py-3 flex-row justify-between items-center mb-2">
         <Text className="text-xl font-bold text-gray-100 tracking-wide">
-          Upcoming Deadlines
+          Assignment
         </Text>
       </View>
       
@@ -157,4 +158,4 @@ const UserHome = () => {
   );
 };
 
-export default UserHome;
+export default Assignment;

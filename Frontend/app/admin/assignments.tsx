@@ -4,16 +4,18 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  TextInput,       
+  TextInput,
   ActivityIndicator,
   Alert,
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { ArrowLeft, Trash2, Edit3 } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import { GetAssignmentsByCohort, DeleteAssignment } from "../../api/apiCall";
+import { GetAssignmentsByCohort} from "../../api/apiCall";
+import AssignmentCard from "../../components/AssignmentCard";
+import { DeleteAssignment } from "@/api/admin";
 
 export type Assignment = {
   id: string;
@@ -178,10 +180,6 @@ const AdminAssignments = () => {
 
         {/* Assignment List */}
         <View className="mt-4 mb-6">
-          <Text className="text-white text-base font-semibold mb-2">
-            Cohort {cohortFilter} Assignments
-          </Text>
-
           {loading ? (
             <View className="flex-1 justify-center items-center py-20">
               <ActivityIndicator size="large" color="#3B82F6" />
@@ -193,27 +191,19 @@ const AdminAssignments = () => {
             <Text className="text-gray-400">No upcoming assignments</Text>
           ) : (
             Object.entries(groupedAssignments).map(([date, assignments]) => (
-              <View key={date} className="mb-6 bg-[#1e293b]/60 border border-white/10 p-4 rounded-xl">
+              <View key={date} className="mb-6">
                 <Text className="text-lg font-semibold text-blue-300 mb-3">{date}</Text>
                 {assignments.map((assign) => (
-                  <View
+                  <AssignmentCard
                     key={assign.id}
-                    className="flex-row justify-between items-center mb-3 bg-[#0f172b] p-3 rounded-lg border border-white/10"
-                  >
-                    <View className="flex-1">
-                      <Text className="text-white font-medium">{assign.title}</Text>
-                      <Text className="text-gray-400 text-sm">{assign.subject}</Text>
-                      <Text className="text-gray-500 text-xs">{assign.displayDate}</Text>
-                    </View>
-                    <View className="flex-row space-x-3">
-                      <TouchableOpacity onPress={() => handleEdit(assign)}>
-                        <Edit3 color="#60A5FA" size={20} />
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(assign.id)}>
-                        <Trash2 color="#EF4444" size={20} />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+                    title={assign.title}
+                    subject={assign.subject}
+                    dueDate={assign.displayDate}
+                    link={assign.link}
+                    isAdmin={true}
+                    onEdit={() => handleEdit(assign)}
+                    onDelete={() => handleDelete(assign.id)}
+                  />
                 ))}
               </View>
             ))

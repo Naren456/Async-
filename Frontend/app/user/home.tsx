@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Text,
   View,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
@@ -13,79 +12,137 @@ import {
   BookOpen,
   Calendar,
   ClipboardList,
-  CheckCircle,
+  GraduationCap,
   Clock,
-  Plus,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
+import AssignmentCard from "../../components/AssignmentCard";
+import { GetAssignmentsByCohort } from "../../api/apiCall";
+
+// --- Types ---
+export type Assignment = {
+  id: string;
+  title: string;
+  subject: string;
+  isoDate: string;
+  displayDate: string;
+  link: string;
+};
+
+type GroupedAssignments = Record<string, Assignment[]>;
+
+// --- Helper: get next deadline ---
+export const nextDeadlineAssignments = (grouped: GroupedAssignments) => {
+  const dates = Object.keys(grouped).sort();
+  if (dates.length === 0) return [];
+  return grouped[dates[0]] || [];
+};
+
+// --- Transform API response ---
+const transformGrouped = (grouped: any): GroupedAssignments => {
+  const result: GroupedAssignments = {};
+  Object.entries(grouped || {}).forEach(([date, items]: any) => {
+    result[date] = (items as any[]).map((a: any) => {
+      const iso = a.dueDate ? new Date(a.dueDate).toISOString() : "";
+      const display = a.dueDate
+        ? new Date(a.dueDate).toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "No due date";
+
+      return {
+        id: a.id,
+        title: a.title,
+        subject: a.subject?.name || a.subject?.code || "Subject",
+        link: a.link || "",
+        isoDate: iso,
+        displayDate: display,
+      } as Assignment;
+    });
+  });
+  return result;
+};
 
 const UserDashboard = () => {
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
-
+  const [assgin, Setassign] = useState(0)
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState({
     totalSubjects: 0,
     totalAssignments: 0,
     upcomingDeadlines: 0,
+    cpg: 0,
+    trends: { subjects: 0, assignments: 0, deadlines: 0, cpg: 0 },
   });
+  const [groupedAssignments, setGroupedAssignments] = useState<GroupedAssignments>({});
+  const [nextAssignments, setNextAssignments] = useState<Assignment[]>([]);
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
+  const loadDashboard = async () => {
     setLoading(true);
     try {
-      // replace with real API call
+      // Dummy stats (replace with actual API data if needed)
       setStats({
         totalSubjects: 5,
         totalAssignments: 12,
         upcomingDeadlines: 3,
+        cpg: 8.5, // Example value
+        trends: { subjects: 1, assignments: -2, deadlines: 0, cpg: 1 },
       });
-    } catch (e) {
-      console.error("Error loading stats:", e);
+
+      if (!user?.cohortNo) return;
+
+      const data = await GetAssignmentsByCohort(user.cohortNo);
+      Setassign(data.count)
+      const grouped = transformGrouped(data.grouped);
+      setGroupedAssignments(grouped);
+
+      const next = nextDeadlineAssignments(grouped);
+      setNextAssignments(next);
+    } catch (err) {
+      console.error("Error loading dashboard:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadStats();
-    setRefreshing(false);
-  };
+  useEffect(() => {
+    loadDashboard();
+  }, [user?.cohortNo]);
 
-  const StatCard = ({ title, value, icon, color }: any) => (
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadDashboard();
+    setRefreshing(false);
+  }, [user?.cohortNo]);
+
+  const StatCard = ({ title, value, icon, color, trend }: any) => (
     <View className="bg-[#1e293b]/60 rounded-xl p-4 mb-4 w-full border border-white/10">
       <View className="flex-row items-center justify-between">
         <View>
           <Text className="text-gray-400 text-sm mb-1">{title}</Text>
           <Text className="text-white text-2xl font-bold">{value}</Text>
+          {trend !== undefined && (
+            <View className="flex-row items-center mt-1">
+              {trend > 0 ? <ArrowUp size={14} color="#10B981" /> : trend < 0 ? <ArrowDown size={14} color="#EF4444" /> : null}
+              <Text className="text-gray-400 text-xs ml-1">
+                {trend > 0 ? `+${trend} this week` : trend < 0 ? `${trend} this week` : `No change`}
+              </Text>
+            </View>
+          )}
         </View>
         <View className={`w-12 h-12 rounded-xl items-center justify-center`} style={{ backgroundColor: color + "22" }}>
           {icon}
         </View>
       </View>
     </View>
-  );
-
-  const ActionButton = ({ title, description, icon, onPress, color = "#3B82F6" }: any) => (
-    <TouchableOpacity
-      className="bg-[#1e293b]/60 rounded-xl p-4 mb-4 border border-white/10 flex-row items-center"
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
-      <View className="w-12 h-12 rounded-xl items-center justify-center mr-4" style={{ backgroundColor: color + "22" }}>
-        {icon}
-      </View>
-      <View className="flex-1">
-        <Text className="text-white text-lg font-semibold">{title}</Text>
-        <Text className="text-gray-400 text-sm mt-1">{description}</Text>
-      </View>
-      <Plus size={16} color={color} />
-    </TouchableOpacity>
   );
 
   if (loading) {
@@ -125,28 +182,60 @@ const UserDashboard = () => {
                 value={stats.totalSubjects}
                 icon={<BookOpen size={26} color="#10B981" />}
                 color="#10B981"
+              
               />
             </View>
             <View className="w-[48%]">
               <StatCard
                 title="Assignments"
-                value={stats.totalAssignments}
+                value={assgin}
                 icon={<ClipboardList size={26} color="#F59E0B" />}
                 color="#F59E0B"
+             
               />
             </View>
             <View className="w-[48%]">
               <StatCard
-                title="Upcoming Deadlines"
-                value={stats.upcomingDeadlines}
+                title="Deadlines"
+                value={nextAssignments.length}
                 icon={<Calendar size={26} color="#3B82F6" />}
                 color="#3B82F6"
+            
+              />
+            </View>
+            <View className="w-[48%]">
+              <StatCard
+                title="CGPA"
+                value={stats.cpg}
+                icon={<GraduationCap size={26} color="#F472B6" />}
+                color="#F472B6"
+             
               />
             </View>
           </View>
         </View>
 
-       
+        {/* Next Deadline Section */}
+        <View className="py-6">
+          <Text className="text-2xl font-bold text-white mb-4">Upcoming Deadline</Text>
+          {nextAssignments.length === 0 ? (
+            <Text className="text-gray-400 text-base px-2">No upcoming assignments</Text>
+          ) : (
+            nextAssignments.map((assign) => (
+              <View
+                key={assign.id}
+                className="mb-4 rounded-xl bg-[#1e293b]/60 border border-white/10 p-4"
+              >
+                <AssignmentCard
+                  title={assign.title}
+                  subject={assign.subject}
+                  dueDate={assign.displayDate}
+                  link={assign.link}
+                />
+              </View>
+            ))
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
