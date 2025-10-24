@@ -4,7 +4,8 @@
 
 **ASync** is a mobile application built with React Native (Expo) and a Node.js backend. It's designed to help college students manage their academic resources, track assignments, view deadlines, and access course notes. The application features role-based access for students and teachers (admins), with a dedicated admin panel for managing content and users.
 
----
+
+
 
 ## Screenshots 
 
@@ -34,6 +35,8 @@
   <img src="https://github.com/user-attachments/assets/1eecf529-a658-4a97-82fa-4413990b412d" width="250"/>
 </p>
 
+## Demo 
+🎥 [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing)
 ## ✨ Features
 
 * **User Authentication:** Secure sign-up and sign-in using email/password, managed with JWT.
@@ -181,5 +184,4 @@
 
 
 
-# Demo 
-🎥 [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing)
+
