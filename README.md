@@ -1,4 +1,4 @@
-# ASync MERN Project 📚
+# ASync Mobile App
 
 ## Description
 
