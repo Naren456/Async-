@@ -1,11 +1,42 @@
-# ASync MERN Project 📚
+# ASync Mobile App
 
 ## Description
 
 **ASync** is a mobile application built with React Native (Expo) and a Node.js backend. It's designed to help college students manage their academic resources, track assignments, view deadlines, and access course notes. The application features role-based access for students and teachers (admins), with a dedicated admin panel for managing content and users.
 
----
 
+
+
+## Screenshots 
+
+### Auth Screen
+<p> 
+  <img src="https://github.com/user-attachments/assets/e5ff1d0f-cf97-40d4-aa3c-76a73c7728fe" width="250" />
+  <img src="https://github.com/user-attachments/assets/504d2e89-b6c6-4cb8-ad75-ae6cb0507b06" width="250"/>
+</p>
+
+### User Screen
+<p>
+  <img src="https://github.com/user-attachments/assets/3a525388-579a-492a-819f-589a50d67ca4" width="250"/>
+  <img src="https://github.com/user-attachments/assets/35ab4704-c0d4-47a7-81ca-95be4adb8687" width="250"/>
+  <img src="https://github.com/user-attachments/assets/835832eb-5f5c-4b8c-99d9-831c19932af7" width="250"/>
+  <img src="https://github.com/user-attachments/assets/01c69e8b-8e11-4bce-b4d0-e1dd26847dc2" width="250"/>
+  <img src="https://github.com/user-attachments/assets/51c0f12e-b5e2-48c8-9a1f-110380a47b9e" width="250"/>
+</p>
+
+### Admin Screen
+
+<p >
+  <img src="https://github.com/user-attachments/assets/506dc18d-f487-40f3-84e0-3a714c836359" width="250"/>
+  <img src="https://github.com/user-attachments/assets/d47b169f-0a64-4541-9cb4-72019e718d28" width="250"/>
+  <img src="https://github.com/user-attachments/assets/5dcb5ab0-176a-4b75-b9cb-72a0d4551e62" width="250"/>
+  <img src="https://github.com/user-attachments/assets/3142b334-d8d3-477e-b51a-7f2183ee8c60" width="250"/>
+  <img src="https://github.com/user-attachments/assets/db40e750-0653-4471-8827-abe3ba12604c" width="250"/>
+  <img src="https://github.com/user-attachments/assets/1eecf529-a658-4a97-82fa-4413990b412d" width="250"/>
+</p>
+
+## Demo 
+🎥 [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing)
 ## ✨ Features
 
 * **User Authentication:** Secure sign-up and sign-in using email/password, managed with JWT.
@@ -149,10 +180,8 @@
 4.  Build: `cd android && ./gradlew assembleRelease` (use `gradlew.bat` on Windows).
 5.  Find APK in `Frontend/android/app/build/outputs/apk/release/`.
 
-# Screenshots
-## User Dashboard
 
 
 
-# Demo 
-🎥 [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing)
+
+
