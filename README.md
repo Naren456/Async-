@@ -149,5 +149,15 @@
 4.  Build: `cd android && ./gradlew assembleRelease` (use `gradlew.bat` on Windows).
 5.  Find APK in `Frontend/android/app/build/outputs/apk/release/`.
 
+## Screenshots 
+![Screenshot_20251024-174924_ASync](https://github.com/user-attachments/assets/e5ff1d0f-cf97-40d4-aa3c-76a73c7728fe)
+![Screenshot_20251024-174929_ASync](https://github.com/user-attachments/assets/504d2e89-b6c6-4cb8-ad75-![Screenshot_20251024-174947_ASync](https://github.com/user-attachments/assets/3a525388-579a-492a-819f-589a50d67ca4)
+![Screenshot_20251024-174955_ASync](https://github.com/user-attachments/assets/35ab4704-c0d4-47a7-81ca-95be4adb8687)
+ae6cb0507b06)
+![Screenshot_20251024-175006_ASync](https://github.com/user-attachments/assets/835832eb-5f5c-4b8c-99d9-831c19932af7)
+![Screenshot_20251024-175012_ASync](https://github.com/user-attachments/assets/01c69e8b-8e11-4bce-b4d0-e1dd26847dc2)
+![Screenshot_20251024-175019_ASync](https://github.com/user-attachments/assets/51c0f12e-b5e2-48c8-9a1f-110380a47b9e)
+
+
 # Demo 
 🎥 [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing)
