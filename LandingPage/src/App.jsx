@@ -40,7 +40,7 @@ function App() {
               Preview
             </a>
             <a
-              href="#download"
+              href="https://drive.google.com/file/d/1Nf93EWr7KL4c1AE5qu_Fa2-3_mcCQfXj/view?usp=drive_link"
               className="px-5 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-200 hover:scale-105"
             >
               Download
@@ -76,7 +76,7 @@ function App() {
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
             <a
-              href="#"
+              href="https://drive.google.com/file/d/1Nf93EWr7KL4c1AE5qu_Fa2-3_mcCQfXj/view?usp=drive_link"
               className="group px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105"
             >
               Download ASync
