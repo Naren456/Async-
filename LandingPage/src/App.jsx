@@ -8,7 +8,7 @@ import {
   Users,
   Play,
 } from "lucide-react";
-
+import { useState , useRef } from "react";
 function App() {
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
