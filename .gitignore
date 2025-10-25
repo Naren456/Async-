@@ -21,5 +21,6 @@
 /Backend/.gitignore
 /Frontend/.gitignore
 /Frontend/.expo
-/Frontend/.vscodeLandingPage/public/async-v1.apk
+/Frontend/.vscode
+LandingPage/public/async-v1.apk
 LandingPage/public/video.mp4

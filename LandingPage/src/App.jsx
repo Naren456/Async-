@@ -7,46 +7,41 @@ import {
   Shield,
   Users,
   Play,
+  ArrowRight,
+  CheckCircle2,
 } from "lucide-react";
-
-import { useState , useRef } from "react";
+import PreviewSection from "./components/PreviewSection";
 
 function App() {
-  const [playing, setPlaying] = useState(false);
-  const videoRef = useRef(null);
-
-  const handlePlay = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
-      setPlaying(true);
-    }
-  };
-
   return (
-    <div className="dark font-[Inter] bg-[#0f172b] text-[#e2e8f0] antialiased">
+    <div className="font-sans bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-slate-100 antialiased">
       {/* Header */}
-      <header className="py-4 bg-[#1e293b]/80 backdrop-blur-sm sticky top-0 z-50 border-b border-white/10">
+      <header className="py-5 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50 border-b border-blue-500/20">
         <nav className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <BookOpenCheck className="text-[#60A5FA]" size={28} />
-            <span className="text-xl font-bold text-white">ASync</span>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg">
+              <BookOpenCheck className="text-white" size={24} />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              ASync
+            </span>
           </div>
-          <div className="space-x-6">
+          <div className="hidden md:flex space-x-8">
             <a
               href="#features"
-              className="text-slate-300 hover:text-white transition duration-200"
+              className="text-slate-300 hover:text-blue-400 transition-colors duration-200 font-medium"
             >
               Features
             </a>
             <a
               href="#preview"
-              className="text-slate-300 hover:text-white transition duration-200"
+              className="text-slate-300 hover:text-blue-400 transition-colors duration-200 font-medium"
             >
               Preview
             </a>
             <a
               href="#download"
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-[#3B82F6] text-white hover:bg-[#2563eb] transition"
+              className="px-5 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-200 hover:scale-105"
             >
               Download
             </a>
@@ -55,160 +50,175 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#1e3a8a] to-[#0f172b] py-24 md:py-36 text-center relative overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            ASync: Master Your Academic Workflow
+      <section className="relative py-12 md:py-40 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          ></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10 text-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+            Master Your
+            <span className="block bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              Academic Workflow
+            </span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">
+
+          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-12 leading-relaxed">
             The sleek, intuitive app for students and teachers. Track
-            assignments, manage notes, and never miss a deadline again — all in
-            one organized place.
+            assignments, manage notes, and never miss a deadline — all in one
+            organized place.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
             <a
               href="#"
-              className="px-8 py-3 rounded-lg font-semibold text-lg inline-flex items-center justify-center bg-[#3B82F6] text-white hover:bg-[#2563eb]"
+              className="group px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105"
             >
-              App Store
-            </a>
-            <a
-              href="#"
-              className="px-8 py-3 rounded-lg font-semibold text-lg inline-flex items-center justify-center border-2 border-[#3B82F6] text-[#60A5FA] hover:bg-[#1e40af]/10"
-            >
-              Google Play
+              Download ASync
+              <ArrowRight
+                className="ml-2 group-hover:translate-x-1 transition-transform"
+                size={20}
+              />
             </a>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-16 md:py-24 bg-[#0f172b]">
+      {/* Features Section */}
+      <section id="features" className="py-20 md:py-32 relative">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
-            Organized Power, Beautifully Designed.
-          </h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Organized Power,
+              <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                Beautifully Designed
+              </span>
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Everything you need to stay on top of your academic life, crafted
+              with care
+            </p>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
               Icon={ClipboardList}
               title="Assignments on Autopilot"
               desc="See all assignments clearly grouped by due date. Teachers can easily manage tasks too."
+              color="blue"
             />
-            {/* Feature 2 */}
             <FeatureCard
               Icon={BookOpen}
               title="Notes, Ready When You Are"
               desc="Access your notes anytime. Filter easily by semester and term."
+              color="cyan"
             />
-            {/* Feature 3 */}
             <FeatureCard
               Icon={Home}
               title="At-a-Glance Dashboard"
               desc="Your personalized home screen shows key stats and upcoming deadlines instantly."
+              color="purple"
             />
-            {/* Feature 4 */}
             <FeatureCard
               Icon={Shield}
               title="Powerful Admin Tools"
               desc="Manage subjects, upload notes, track assignments, and view user statistics efficiently."
+              color="green"
             />
-            {/* Feature 5 */}
             <FeatureCard
               Icon={Users}
               title="Tailored Experience"
               desc="Distinct interfaces optimized for both Students and Teachers."
+              color="pink"
+            />
+            <FeatureCard
+              Icon={CheckCircle2}
+              title="Never Miss a Deadline"
+              desc="Smart notifications and reminders keep you ahead of schedule."
+              color="orange"
             />
           </div>
         </div>
       </section>
 
-      {/* Demo Section */}
-      <section id="preview" className="py-16 md:py-24 bg-[#1e293b] text-center">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Explore the ASync Interface
-          </h2>
-          <p className="text-lg text-slate-400 mb-12 max-w-2xl mx-auto">
-            Experience the clarity and focus of ASync’s dark theme.
-          </p>
-
-          <div className="bg-[#0f172b] p-8 rounded-lg border border-white/10 mb-12 flex items-center justify-center aspect-video max-w-4xl mx-auto">
-            <p className="text-slate-500 italic">
-              [Screenshots showcasing Sign In, Dashboard, and Admin panel]
-            </p>
-          </div>
-
-          <h3 className="text-2xl font-semibold text-white mb-4">Watch the Demo</h3>
-          <p className="text-slate-400 mb-8 max-w-xl mx-auto">
-            See ASync in action and discover how it can streamline your studies.
-          </p>
-          <a
-            href="https://drive.google.com/file/d/1DWEfB8W5igEUpIqNDGv97bxKVqlaRhlA/view?usp=sharing"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 rounded-lg font-semibold text-lg inline-flex items-center border-2 border-[#3B82F6] text-[#60A5FA] hover:bg-[#1e40af]/10"
-          >
-            <Play className="mr-2 h-5 w-5" />
-            Watch Demo Video
-          </a>
-        </div>
+      {/* Demo / Preview Section */}
+      <section id="preview">
+        <PreviewSection />
       </section>
 
       {/* Footer */}
       <footer
         id="download"
-        className="py-16 md:py-24 bg-[#0f172b] text-center border-t border-white/10"
+        className="py-20 md:py-32 relative border-t border-blue-500/20"
       >
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Download ASync Today
-          </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-10">
-            Stop juggling platforms and start mastering your coursework.
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-t from-blue-950/30 to-transparent"></div>
 
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <a
-              href="#"
-              className="px-8 py-3 rounded-lg font-semibold text-lg inline-flex items-center justify-center bg-[#3B82F6] text-white hover:bg-[#2563eb]"
-            >
-              App Store
-            </a>
-            <a
-              href="#"
-              className="px-8 py-3 rounded-lg font-semibold text-lg inline-flex items-center justify-center border-2 border-[#3B82F6] text-[#60A5FA] hover:bg-[#1e40af]/10"
-            >
-              Google Play
-            </a>
-          </div>
-
-          <div className="mt-12 text-sm text-slate-500">
-            &copy; 2025 ASync. All rights reserved. |
-            <a href="#" className="hover:text-slate-400 mx-2">
+        <div className="text-center pt-12 border-t border-slate-800">
+          <div className="flex flex-wrap justify-center gap-6 mb-6 text-sm text-slate-400">
+            <a href="#" className="hover:text-blue-400 transition-colors">
               Privacy Policy
             </a>
-            |
-            <a href="#" className="hover:text-slate-400 mx-2">
+            <span>•</span>
+            <a href="#" className="hover:text-blue-400 transition-colors">
               Terms of Service
             </a>
+            <span>•</span>
+            <a href="#" className="hover:text-blue-400 transition-colors">
+              Contact
+            </a>
           </div>
+          <p className="text-sm text-slate-500">
+            &copy; 2025 ASync. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
   );
 }
 
-// ✅ Reusable FeatureCard Component
-const FeatureCard = ({ Icon, title, desc }) => (
-  <div className="feature-card rounded-xl p-8 bg-[#1e293b] border border-white/10 hover:-translate-y-1 hover:shadow-lg transition">
-    <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-5 bg-[#3B82F6]/20">
-      <Icon className="text-[#60A5FA]" size={24} />
+const FeatureCard = ({ Icon, title, desc, color }) => {
+  const colorClasses = {
+    blue: "from-blue-500/20 to-blue-600/20 group-hover:from-blue-500/30 group-hover:to-blue-600/30",
+    cyan: "from-cyan-500/20 to-cyan-600/20 group-hover:from-cyan-500/30 group-hover:to-cyan-600/30",
+    purple:
+      "from-purple-500/20 to-purple-600/20 group-hover:from-purple-500/30 group-hover:to-purple-600/30",
+    green:
+      "from-green-500/20 to-green-600/20 group-hover:from-green-500/30 group-hover:to-green-600/30",
+    pink: "from-pink-500/20 to-pink-600/20 group-hover:from-pink-500/30 group-hover:to-pink-600/30",
+    orange:
+      "from-orange-500/20 to-orange-600/20 group-hover:from-orange-500/30 group-hover:to-orange-600/30",
+  };
+
+  const iconColors = {
+    blue: "text-blue-400",
+    cyan: "text-cyan-400",
+    purple: "text-purple-400",
+    green: "text-green-400",
+    pink: "text-pink-400",
+    orange: "text-orange-400",
+  };
+
+  return (
+    <div className="group rounded-2xl p-8 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur border border-slate-700/50 hover:border-blue-500/50 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300">
+      <div
+        className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-gradient-to-br ${colorClasses[color]} transition-all duration-300`}
+      >
+        <Icon
+          className={`${iconColors[color]} group-hover:scale-110 transition-transform`}
+          size={28}
+        />
+      </div>
+      <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors">
+        {title}
+      </h3>
+      <p className="text-slate-400 leading-relaxed">{desc}</p>
     </div>
-    <h3 className="text-xl font-semibold text-white mb-3">{title}</h3>
-    <p className="text-slate-400 leading-relaxed">{desc}</p>
-  </div>
-);
+  );
+};
 
 export default App;
