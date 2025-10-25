@@ -20,7 +20,7 @@ function App() {
         <nav className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg">
-              <BookOpenCheck className="text-white" size={24} />
+              <BookOpen className="text-white" size={24} />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               ASync
@@ -113,7 +113,7 @@ function App() {
               color="blue"
             />
             <FeatureCard
-              Icon={BookOpen}
+              Icon={BookOpenCheck}
               title="Notes, Ready When You Are"
               desc="Access your notes anytime. Filter easily by semester and term."
               color="cyan"
