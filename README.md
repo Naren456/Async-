@@ -121,7 +121,7 @@
 
 1.  **Clone the Repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/Naren456/Async.git
     cd async
     ```
 
