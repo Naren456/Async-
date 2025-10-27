@@ -1,8 +1,6 @@
 import { Stack } from "expo-router";
-import './global.css'
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
-
 
 export default function RootLayout() {
   return (
@@ -13,10 +11,6 @@ export default function RootLayout() {
         <Stack.Screen name="auth/signup"/> 
         <Stack.Screen name="user"/>
         <Stack.Screen name="admin" options={{ presentation: 'modal' }}/> 
-        {/* <Stack.Screen name="admin/assignments" options={{ presentation: 'modal' }}/> 
-        <Stack.Screen name="admin/subjects" options={{ presentation: 'modal' }}/> 
-        <Stack.Screen name="admin/users" options={{ presentation: 'modal' }}/> 
-        <Stack.Screen name="admin/analytics" options={{ presentation: 'modal' }}/>  */}
         <Stack.Screen name="note/[id]"/>
         <Stack.Screen name="pdf/[id]"/>
       </Stack>

@@ -35,9 +35,24 @@ type GroupedAssignments = Record<string, Assignment[]>;
 
 // --- Helper: get next deadline ---
 export const nextDeadlineAssignments = (grouped: GroupedAssignments) => {
-  const dates = Object.keys(grouped).sort();
-  if (dates.length === 0) return [];
-  return grouped[dates[0]] || [];
+  if (!grouped || Object.keys(grouped).length === 0) return [];
+
+  const parseDate = (dateStr: string) => {
+    const [day, monthStr, year] = dateStr.split("-");
+    const monthMap: Record<string, number> = {
+      Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+      Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11,
+    };
+    return new Date(Number(year), monthMap[monthStr], Number(day));
+  };
+
+  const sortedDates = Object.keys(grouped).sort(
+    (a, b) => parseDate(a).getTime() - parseDate(b).getTime()
+  );
+
+  // Return the earliest date’s assignments
+  const nextDate = sortedDates[0];
+  return grouped[nextDate] || [];
 };
 
 // --- Transform API response ---

@@ -86,6 +86,7 @@ const Assignment = () => {
     setError(null);
     try {
       const data = await GetAssignmentsByCohort(cohortNo);
+      
       setGroupedAssignments(transformGrouped(data.grouped));
     } catch (err) {
       console.error("Error refreshing assignments:", err);

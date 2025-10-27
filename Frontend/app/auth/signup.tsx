@@ -8,7 +8,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { BookOpen, User, Mail, Lock, Users, Eye, EyeOff } from "lucide-react-native";
 import { AuthsignUp } from "../../api/apiCall";
-
+import * as SecureStore from 'expo-secure-store';
 // Validation Schema
 const SignUpSchema = Yup.object().shape({
   name: Yup.string()

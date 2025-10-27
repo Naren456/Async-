@@ -10,6 +10,7 @@ import { BookOpen, Mail, Lock, Eye, EyeOff } from "lucide-react-native";
 import { AuthsignIn } from "@/api/apiCall";
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/reducer';
+import * as SecureStore from 'expo-secure-store';
 //  import { showLoginNotification } from "../../utils/notifications";
 // Validation schema
 const SignInSchema = Yup.object().shape({
@@ -36,8 +37,8 @@ export default function SignIn() {
 
     try {
       const result = await AuthsignIn(values);
-      console.log("SignIn Success:", result);
-      dispatch(setUser(result));
+      await SecureStore.setItemAsync('authToken', result.token);
+      dispatch(setUser({"user":result.user}));
       // await showLoginNotification(result.user.name); 
       // Redirect based on user role
       if (result.user.role === 'TEACHER') {

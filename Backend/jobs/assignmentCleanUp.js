@@ -2,7 +2,7 @@ import cron from "node-cron";
 import prisma from "../config/db.js"; // adjust path if needed
 
 // Run every minute (for testing). Change to "*/10 * * * *" for every 10 min in production
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("* * * * *", async () => {
   try {
     const now = new Date();
 

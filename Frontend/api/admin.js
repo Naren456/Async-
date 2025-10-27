@@ -1,19 +1,8 @@
-import axios from "axios";
-import { API_BASE_URL } from "./config";
-import Assignment from "@/app/user/assignment";
+import api from "./config";
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // always send cookies/credentials
-});
-
-export const GetAdminStats = async (token) => {
+export const GetAdminStats = async () => {
   try {
-    const response = await api.get('/api/admin/stats', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get('/api/admin/stats')
     return response.data;
   } catch (error) {
     console.error('GetAdminStats Error:', error);
@@ -23,12 +12,7 @@ export const GetAdminStats = async (token) => {
 
 export const CreateSubject = async (token, subject) => {
   try {
-    const response = await api.post('/api/subjects', subject, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post('/api/subjects', subject)
     return response.data;
   } catch (error) {
     console.error('CreateSubject Error:', error);
@@ -38,12 +22,8 @@ export const CreateSubject = async (token, subject) => {
 
 export const UpdateSubject = async (token, code, updates) => {
   try {
-    const response = await api.put(`/api/subjects/${code}`, updates, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.put(`/api/subjects/${code}`, updates)
+  
     return response.data;
   } catch (error) {
     console.error('UpdateSubject Error:', error);
@@ -53,11 +33,7 @@ export const UpdateSubject = async (token, code, updates) => {
 
 export const DeleteSubject = async (token, subjectId) => {
   try {
-    const response = await api.delete(`/api/subjects/${subjectId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.delete(`/api/subjects/${subjectId}`)
     return response.data;
   } catch (error) {
     console.error('DeleteSubject Error:', error);
@@ -67,11 +43,7 @@ export const DeleteSubject = async (token, subjectId) => {
 
 export const GetAllUsers = async (token) => {
   try {
-    const response = await api.get(`/api/admin/Users`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(`/api/admin/Users`)
     return response.data;
   } catch (error) {
     console.error('GetAllUsers Error:', error);
@@ -89,12 +61,7 @@ export const GetAllUsers = async (token) => {
 
 export const UploadNote = async (token, formData) => {
   try {
-    const response = await api.post('/api/notes/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // Important for file uploads
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post('/api/notes/upload', formData,)
     return response.data; // { note }
   } catch (error) {
     console.error('UploadNote Error:', error.response?.data || error.message);
@@ -105,9 +72,7 @@ export const UploadNote = async (token, formData) => {
  // Add DeleteNote API call
  export const DeleteNote = async (token, noteId) => {
     try {
-        const response = await api.delete(`/api/notes/${noteId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await api.delete(`/api/notes/${noteId}`)
         return response.data; // { message }
     } catch (error) {
         console.error('DeleteNote Error:', error.response?.data || error.message);
@@ -117,9 +82,7 @@ export const UploadNote = async (token, formData) => {
 
 export const DeleteAssignment =  async (token,AssignmentId) =>{
   try{
-     const response = await api.delete(`/api/assignments/${AssignmentId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+     const response = await api.delete(`/api/assignments/${AssignmentId}`)
         return response.data; // { message }
   }
   catch(error){
